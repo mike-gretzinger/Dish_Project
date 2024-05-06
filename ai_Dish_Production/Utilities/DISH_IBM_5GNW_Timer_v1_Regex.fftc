@@ -1,0 +1,554 @@
+<?xml version="1.0"?>
+<testCase version="8.7.2.202202281342">
+    <general>
+        <language>Python</language>
+    </general>
+    <execution>
+        <parameters version="8.7.2.202202281342">
+            <parameters escape="true">
+                <parameters xmlns:pt="http://www.fnfr.com/schemas/parameterTree">
+                    <SessionRegisters>30</SessionRegisters>
+                    <RegistrationCompletes>20</RegistrationCompletes>
+                    <RegistrationRejects>0</RegistrationRejects>
+                    <UeNas5gMmSupi>313340199999019</UeNas5gMmSupi>
+                    <UeNas5gMmT3510Timer>15</UeNas5gMmT3510Timer>
+                    <Topology_parameters>
+                        <TAS pt:description="Required.">
+                            <Hostname pt:description="${topology/resources/TAS/Hostname}">${topology/resources/TAS/Hostname}</Hostname>
+                            <ipAddress pt:description="${topology/resources/TAS/ipAddress}">${topology/resources/TAS/ipAddress}</ipAddress>
+                            <Username pt:description="Required.">${topology/resources/TAS/username}</Username>
+                            <Password pt:description="Required.">${topology/resources/TAS/password}</Password>
+                        </TAS>
+                    </Topology_parameters>
+                </parameters>
+            </parameters>
+        </parameters>
+    </execution>
+    <procedures>
+        <item name="main">
+            <steps>
+                <item guid="08d9efc6-d4c5-4481-9e31-14d3cc4096d9" action="open" session="Landslide TAS Abstract Group/TS 1" skip="true">
+                    <command>
+                        <body>device:TS#REST</body>
+                    </command>
+                    <applicationProperties type="com.fnfr.svt.documents.OpenStepPropertyGroup">
+                        <stepProperties type="com.fnfr.svt.documents.EmptyPropertyGroup"/>
+                        <sessionProperties type="com.fnfr.svt.adapter.automation.tools.common.documents.TransferableDocumentObject" transferableToolId="com.spirent.itest.applications.landsliderest" transferableType="com.spirent.itest.applications.landsliderest.properties.LandslideRestSessionProperties"/>
+                        <sessionClass type="com.fnfr.svt.documents.EmptyPropertyGroup"/>
+                        <sessionVersion type="com.fnfr.svt.documents.EmptyPropertyGroup"/>
+                    </applicationProperties>
+                </item>
+                <item guid="0f772ff9-7edc-444b-8751-069f024efd7f" action="comment" useFieldsInCommand="false">
+                    <command>
+                        <body>Read in params for open command</body>
+                    </command>
+                    <nestedSteps>
+                        <item guid="bfbbc514-88d7-4d66-8f09-e861c418dba5" action="eval" useFieldsInCommand="false">
+                            <command>
+                                <body>tas_hostname = param(&apos;Topology_parameters/TAS/Hostname&apos;, &quot;&quot;)</body>
+                            </command>
+                            <applicationProperties type="com.fnfr.svt.documents.EmptyPropertyGroup"/>
+                        </item>
+                        <item guid="ae4b0af6-b6fb-44eb-bb0d-b8b2b81ae176" action="eval" useFieldsInCommand="false">
+                            <command>
+                                <body>tas_ipaddress = param(&apos;Topology_parameters/TAS/ipAddress&apos;, &quot;&quot;)</body>
+                            </command>
+                            <applicationProperties type="com.fnfr.svt.documents.EmptyPropertyGroup"/>
+                        </item>
+                        <item guid="2eb145c8-3394-4f2f-8a30-d864a3b1e010" action="eval" useFieldsInCommand="false">
+                            <command>
+                                <body>tas_username = param(&apos;Topology_parameters/TAS/Username&apos;, &quot;&quot;)</body>
+                            </command>
+                            <applicationProperties type="com.fnfr.svt.documents.EmptyPropertyGroup"/>
+                        </item>
+                        <item guid="6a728126-a04e-4aa3-98ea-74d300e5a1f0" action="eval" useFieldsInCommand="false">
+                            <command>
+                                <body>tas_password = param(&apos;Topology_parameters/TAS/Password&apos;, &quot;&quot;)</body>
+                            </command>
+                            <applicationProperties type="com.fnfr.svt.documents.EmptyPropertyGroup"/>
+                        </item>
+                        <item guid="b49cc6e6-3525-42a1-b25e-b054c4e85dcc" action="eval" useFieldsInCommand="false">
+                            <command>
+                                <body>tas_api_url = &quot;http://{0}:8080/api&quot;.format(tas_hostname if tas_hostname else tas_ipaddress)</body>
+                            </command>
+                            <applicationProperties type="com.fnfr.svt.documents.EmptyPropertyGroup"/>
+                        </item>
+                        <item guid="2c09c017-589d-4577-8b73-95cc51f5bf2e" action="eval" useFieldsInCommand="false">
+                            <command>
+                                <body>tas_api_url</body>
+                            </command>
+                            <applicationProperties type="com.fnfr.svt.documents.EmptyPropertyGroup"/>
+                        </item>
+                    </nestedSteps>
+                    <applicationProperties type="com.fnfr.svt.documents.EmptyPropertyGroup"/>
+                </item>
+                <item guid="98b23286-9ba4-4903-8bd8-dd053f403957" action="open" session="Landslide TAS Abstract Group/TS 1" useFieldsInCommand="false">
+                    <command>
+                        <body>application:com.spirent.itest.applications.landsliderest</body>
+                    </command>
+                    <postProcessing>
+                        <analysisRules>
+                            <item>
+                                <extractorInfo extractorType="contains">
+                                    <extractorProperties type="com.fnfr.svt.mapping.execution.extractors.ExtractorContainsPropertyGroup">
+                                        <searchString>Error</searchString>
+                                    </extractorProperties>
+                                </extractorInfo>
+                                <processorInfo ruleType="assert">
+                                    <ruleProperties type="com.fnfr.svt.execution.builtin.processors.AssertionPropertyGroup">
+                                        <expression>value == 1</expression>
+                                        <actionsWhenTrue>
+                                            <item actionId="FailTest">
+                                                <actionProperties type="com.fnfr.svt.documents.EmptyPropertyGroup"/>
+                                            </item>
+                                            <item actionId="DeclareExecutionIssue">
+                                                <actionProperties type="com.fnfr.svt.execution.builtin.actions.ExecutionIssuePropertyGroup" severity="Warning">
+                                                    <message>Landslide Session Currently Unavaliable at: [tas_api_url] </message>
+                                                </actionProperties>
+                                            </item>
+                                            <item actionId="DeclareExecutionIssue">
+                                                <actionProperties type="com.fnfr.svt.execution.builtin.actions.ExecutionIssuePropertyGroup" severity="Information">
+                                                    <message>Will retry in 15 seconds</message>
+                                                </actionProperties>
+                                            </item>
+                                            <item actionId="RepeatStep">
+                                                <actionProperties type="com.fnfr.svt.execution.builtin.actions.RepeatStepPropertyGroup" maxRepeatCount="6" delayBetweenRepeats="15.0"/>
+                                            </item>
+                                        </actionsWhenTrue>
+                                    </ruleProperties>
+                                </processorInfo>
+                            </item>
+                            <item>
+                                <extractorInfo extractorType="query">
+                                    <extractorProperties type="com.fnfr.svt.mapping.execution.extractors.QueryDataExtractorPropertyGroup">
+                                        <query>success()</query>
+                                    </extractorProperties>
+                                </extractorInfo>
+                                <processorInfo ruleType="message">
+                                    <ruleProperties type="com.fnfr.svt.execution.builtin.processors.MessageProcessorPropertyGroup" severity="Information">
+                                        <message>Start Landslide Session at: [tas_api_url]</message>
+                                        <tag sub="false" defaultValue=""/>
+                                    </ruleProperties>
+                                </processorInfo>
+                            </item>
+                        </analysisRules>
+                    </postProcessing>
+                    <eventHandlers>
+                        <item name="OnRepeatStepMaxCountExceeded">
+                            <item actionId="DeclareExecutionIssue">
+                                <actionProperties type="com.fnfr.svt.execution.builtin.actions.ExecutionIssuePropertyGroup">
+                                    <message>Unable to Start Landslide Session at: [tas_api_url]</message>
+                                </actionProperties>
+                            </item>
+                            <item actionId="FailTest">
+                                <actionProperties type="com.fnfr.svt.documents.EmptyPropertyGroup"/>
+                            </item>
+                            <item actionId="AbortExecution">
+                                <actionProperties type="com.fnfr.svt.documents.EmptyPropertyGroup"/>
+                            </item>
+                            <item actionId="SkipRemainingRules">
+                                <actionProperties type="com.fnfr.svt.documents.EmptyPropertyGroup"/>
+                            </item>
+                        </item>
+                    </eventHandlers>
+                    <applicationProperties type="com.fnfr.svt.documents.OpenStepPropertyGroup">
+                        <stepProperties type="com.fnfr.svt.documents.EmptyPropertyGroup"/>
+                        <sessionProperties type="com.fnfr.svt.adapter.automation.tools.common.documents.TransferableDocumentObject" transferableToolId="com.spirent.itest.applications.landsliderest" transferableType="com.spirent.itest.applications.landsliderest.properties.LandslideRestSessionProperties" landslideRESTAPI="[tas_api_url]" landslideRESTAPI.inherit="false">
+                            <authentication transferableToolId="com.spirent.itest.applications.landsliderest" transferableType="com.spirent.itest.applications.landsliderest.properties.LandslideRestAuthenticationProperties" user="[tas_username]" user.inherit="false" password.masked="false" password="[tas_password]" password.inherit="false"/>
+                        </sessionProperties>
+                        <sessionClass type="com.fnfr.svt.documents.EmptyPropertyGroup"/>
+                        <sessionVersion type="com.fnfr.svt.documents.EmptyPropertyGroup"/>
+                    </applicationProperties>
+                </item>
+                <item guid="4b8a4e54-3058-4099-b8df-d4cfb97c1e4a" action="RetrieveTestSession" session="Landslide TAS Abstract Group/TS 1" skip="true" normalOffset="15.821" estimatedStepExecutionTime="2.382">
+                    <command>
+                        <body>-library 65878 -name AmfNodal+AmfNode_RegistrationOnlyShubhamNew</body>
+                    </command>
+                    <postProcessing>
+                        <analysisRules>
+                            <item>
+                                <extractorInfo extractorType="query">
+                                    <extractorProperties type="com.fnfr.svt.mapping.execution.extractors.QueryDataExtractorPropertyGroup">
+                                        <query>handle()</query>
+                                    </extractorProperties>
+                                </extractorInfo>
+                                <processorInfo ruleType="store">
+                                    <ruleProperties type="com.fnfr.svt.execution.builtin.processors.StoreProcessorPropertyGroup">
+                                        <storageLocation>handle0</storageLocation>
+                                        <responseValue type="com.fnfr.documents.PropertyBoolean">false</responseValue>
+                                        <variable type="com.fnfr.documents.PropertyBoolean">true</variable>
+                                        <secret type="com.fnfr.documents.PropertyBoolean">false</secret>
+                                    </ruleProperties>
+                                </processorInfo>
+                            </item>
+                        </analysisRules>
+                    </postProcessing>
+                    <applicationProperties type="com.fnfr.itest.platform2.shared.documents.ntaf.NtafTransferableDocumentObject" action="RetrieveTestSession" subharness="http://spirent.com/NTAF/harness/iTest/LandslideRest/Main" harness="http://spirent.com/NTAF/harness/iTest/LandslideRest/Main" harnessName="http://spirent.com/NTAF/harness/iTest/LandslideRest/Main" library="65878" library.inherit="false" library.sub="false" name="AmfNodal+AmfNode_RegistrationOnlyShubhamNew" name.inherit="false" name.sub="false"/>
+                </item>
+                <item guid="2705179a-bf80-4428-88d2-07d534477447" action="RetrieveTestSession" session="Landslide TAS Abstract Group/TS 1" normalOffset="15.821" estimatedStepExecutionTime="2.382">
+                    <command>
+                        <body>-library &quot;-43&quot; -name IMS_VO_014_Dish_sub_calls_Dish_sub_originating_terminating</body>
+                    </command>
+                    <postProcessing>
+                        <analysisRules>
+                            <item>
+                                <extractorInfo extractorType="query">
+                                    <extractorProperties type="com.fnfr.svt.mapping.execution.extractors.QueryDataExtractorPropertyGroup">
+                                        <query>handle()</query>
+                                    </extractorProperties>
+                                </extractorInfo>
+                                <processorInfo ruleType="store">
+                                    <ruleProperties type="com.fnfr.svt.execution.builtin.processors.StoreProcessorPropertyGroup">
+                                        <storageLocation>handle0</storageLocation>
+                                        <responseValue type="com.fnfr.documents.PropertyBoolean">false</responseValue>
+                                        <variable type="com.fnfr.documents.PropertyBoolean">true</variable>
+                                        <secret type="com.fnfr.documents.PropertyBoolean">false</secret>
+                                    </ruleProperties>
+                                </processorInfo>
+                            </item>
+                        </analysisRules>
+                    </postProcessing>
+                    <applicationProperties type="com.fnfr.itest.platform2.shared.documents.ntaf.NtafTransferableDocumentObject" action="RetrieveTestSession" subharness="http://spirent.com/NTAF/harness/iTest/LandslideRest/Main" harness="http://spirent.com/NTAF/harness/iTest/LandslideRest/Main" harnessName="http://spirent.com/NTAF/harness/iTest/LandslideRest/Main" library="-43" library.inherit="false" library.sub="false" name="IMS_VO_014_Dish_sub_calls_Dish_sub_originating_terminating" name.inherit="false" name.sub="false"/>
+                </item>
+                <item guid="a6d310d9-7391-4584-86d1-22d1172a7c0e" action="ConfigureTestcaseParameters" session="Landslide TAS Abstract Group/TS 1" normalOffset="16.213" estimatedStepExecutionTime="1.014">
+                    <command>
+                        <body>-testHandle [handle0] -tsGroupIndex 0 -testcaseIndex 0</body>
+                    </command>
+                    <applicationProperties type="com.fnfr.itest.platform2.shared.documents.ntaf.NtafTransferableDocumentObject" action="ConfigureTestcaseParameters" subharness="http://spirent.com/NTAF/harness/iTest/LandslideRest/Main" harness="http://spirent.com/NTAF/harness/iTest/LandslideRest/Main" harnessName="http://spirent.com/NTAF/harness/iTest/LandslideRest/Main" testHandle="[handle0]" testHandle.inherit="false">
+                        <parameter inherit="false">
+                            <item parameterName="UeNas5gMmSupi" parameterName.inherit="false" parameterName.sub="false" parameterValue="[param(&apos;UeNas5gMmSupi&apos;)]" parameterValue.inherit="false"/>
+                        </parameter>
+                    </applicationProperties>
+                </item>
+                <item guid="250b0d51-ef65-440e-a93c-df80dbe30326" action="ConfigureTestcaseParameters" session="Landslide TAS Abstract Group/TS 1" normalOffset="16.213" estimatedStepExecutionTime="1.014">
+                    <command>
+                        <body>-testHandle [handle0] -tsGroupIndex 0 -testcaseIndex 0</body>
+                    </command>
+                    <applicationProperties type="com.fnfr.itest.platform2.shared.documents.ntaf.NtafTransferableDocumentObject" action="ConfigureTestcaseParameters" subharness="http://spirent.com/NTAF/harness/iTest/LandslideRest/Main" harness="http://spirent.com/NTAF/harness/iTest/LandslideRest/Main" harnessName="http://spirent.com/NTAF/harness/iTest/LandslideRest/Main" testHandle="[handle0]" testHandle.inherit="false">
+                        <parameter inherit="false">
+                            <item parameterName="UeNas5gMmSupi" parameterName.inherit="false" parameterName.sub="false" parameterValue="[param(&apos;UeNas5gMmSupi&apos;)]" parameterValue.inherit="false"/>
+                        </parameter>
+                    </applicationProperties>
+                </item>
+                <item guid="0b1994bd-9d4b-4a26-a440-8c5daba75fc7" action="ConfigureTestcaseParameters" session="Landslide TAS Abstract Group/TS 1" normalOffset="4.799" estimatedStepExecutionTime="0.005">
+                    <command>
+                        <body>-testHandle [handle0] -tsGroupIndex 0 -testcaseIndex 0</body>
+                    </command>
+                    <applicationProperties type="com.fnfr.itest.platform2.shared.documents.ntaf.NtafTransferableDocumentObject" action="ConfigureTestcaseParameters" subharness="http://spirent.com/NTAF/harness/iTest/LandslideRest/Main" harness="http://spirent.com/NTAF/harness/iTest/LandslideRest/Main" harnessName="http://spirent.com/NTAF/harness/iTest/LandslideRest/Main" testHandle="[handle0]" testHandle.inherit="false">
+                        <parameter inherit="false">
+                            <item parameterName="UeNas5gMmT3510Timer" parameterName.inherit="false" parameterName.sub="false" parameterValue="[param(&apos;UeNas5gMmT3510Timer&apos;)]" parameterValue.inherit="false"/>
+                        </parameter>
+                    </applicationProperties>
+                </item>
+                <item guid="81089e34-33ed-49d7-963b-fc03735dd69e" action="ConfigureTestcaseParameters" session="Landslide TAS Abstract Group/TS 1" normalOffset="4.799" estimatedStepExecutionTime="0.005">
+                    <command>
+                        <body>-testHandle [handle0] -tsGroupIndex 0 -testcaseIndex 0</body>
+                    </command>
+                    <applicationProperties type="com.fnfr.itest.platform2.shared.documents.ntaf.NtafTransferableDocumentObject" action="ConfigureTestcaseParameters" subharness="http://spirent.com/NTAF/harness/iTest/LandslideRest/Main" harness="http://spirent.com/NTAF/harness/iTest/LandslideRest/Main" harnessName="http://spirent.com/NTAF/harness/iTest/LandslideRest/Main" testHandle="[handle0]" testHandle.inherit="false">
+                        <parameter inherit="false">
+                            <item parameterName="UeNas5gMmT3510Timer" parameterName.inherit="false" parameterName.sub="false" parameterValue="[param(&apos;UeNas5gMmT3510Timer&apos;)]" parameterValue.inherit="false"/>
+                        </parameter>
+                    </applicationProperties>
+                </item>
+                <item guid="bcc5177d-0f27-41b5-a3d2-6c1e9cd05e4a" action="Run" session="Landslide TAS Abstract Group/TS 1" normalOffset="3.843" estimatedStepExecutionTime="8.941">
+                    <command>
+                        <body>-testHandle [handle0]</body>
+                    </command>
+                    <postProcessing>
+                        <analysisRules>
+                            <item>
+                                <extractorInfo extractorType="query">
+                                    <extractorProperties type="com.fnfr.svt.mapping.execution.extractors.QueryDataExtractorPropertyGroup">
+                                        <query>id()</query>
+                                    </extractorProperties>
+                                </extractorInfo>
+                                <processorInfo ruleType="store">
+                                    <ruleProperties type="com.fnfr.svt.execution.builtin.processors.StoreProcessorPropertyGroup">
+                                        <storageLocation>runId0</storageLocation>
+                                        <responseValue type="com.fnfr.documents.PropertyBoolean">false</responseValue>
+                                        <variable type="com.fnfr.documents.PropertyBoolean">true</variable>
+                                        <secret type="com.fnfr.documents.PropertyBoolean">false</secret>
+                                    </ruleProperties>
+                                </processorInfo>
+                            </item>
+                        </analysisRules>
+                    </postProcessing>
+                    <applicationProperties type="com.fnfr.itest.platform2.shared.documents.ntaf.NtafTransferableDocumentObject" action="Run" subharness="http://spirent.com/NTAF/harness/iTest/LandslideRest/Main" harness="http://spirent.com/NTAF/harness/iTest/LandslideRest/Main" harnessName="http://spirent.com/NTAF/harness/iTest/LandslideRest/Main" testHandle="[handle0]" testHandle.inherit="false"/>
+                </item>
+                <item guid="708d4dd1-f073-42a2-97f8-2dbf8af6b5a4" action="comment" useFieldsInCommand="false">
+                    <command>
+                        <body>init variables</body>
+                    </command>
+                    <nestedSteps>
+                        <item guid="99c737e5-a855-4cff-a4d5-07f5062fa79e" action="eval" useFieldsInCommand="false">
+                            <command>
+                                <body>runStatus=&apos;RUNNING&apos;</body>
+                            </command>
+                            <applicationProperties type="com.fnfr.svt.documents.EmptyPropertyGroup"/>
+                        </item>
+                        <item guid="2edc0b37-5bb6-40e3-a6f4-f6153b3203fc" action="eval" useFieldsInCommand="false">
+                            <command>
+                                <body>aborted = False</body>
+                            </command>
+                            <applicationProperties type="com.fnfr.svt.documents.EmptyPropertyGroup"/>
+                        </item>
+                    </nestedSteps>
+                    <applicationProperties type="com.fnfr.svt.documents.EmptyPropertyGroup"/>
+                </item>
+                <item guid="fdeb1355-cab1-445f-8c05-0f5c566ace62" action="while" useFieldsInCommand="false">
+                    <command>
+                        <body>runStatus != &apos;COMPLETE&apos; and aborted == False:</body>
+                    </command>
+                    <nestedSteps>
+                        <item guid="c5b54b1c-24c5-451b-8597-8b010b0a0335" action="sleep">
+                            <command>
+                                <body>5</body>
+                            </command>
+                            <applicationProperties type="com.fnfr.svt.documents.EmptyPropertyGroup"/>
+                        </item>
+                        <item guid="16fc08e7-029b-4870-9734-bf9dc5613ee2" action="ShowRunningTest" session="Landslide TAS Abstract Group/TS 1" normalOffset="24.762" estimatedStepExecutionTime="0.232">
+                            <command>
+                                <body>-runningTestId [runId0] -fullInfo true</body>
+                            </command>
+                            <postProcessing>
+                                <analysisRules>
+                                    <item>
+                                        <extractorInfo extractorType="query">
+                                            <extractorProperties type="com.fnfr.svt.mapping.execution.extractors.QueryDataExtractorPropertyGroup">
+                                                <query>testStateOrStep()</query>
+                                            </extractorProperties>
+                                        </extractorInfo>
+                                        <processorInfo ruleType="store">
+                                            <ruleProperties type="com.fnfr.svt.execution.builtin.processors.StoreProcessorPropertyGroup">
+                                                <storageLocation>runStatus</storageLocation>
+                                                <responseValue type="com.fnfr.documents.PropertyBoolean">false</responseValue>
+                                                <variable type="com.fnfr.documents.PropertyBoolean">true</variable>
+                                                <secret type="com.fnfr.documents.PropertyBoolean">false</secret>
+                                            </ruleProperties>
+                                        </processorInfo>
+                                    </item>
+                                </analysisRules>
+                            </postProcessing>
+                            <applicationProperties type="com.fnfr.itest.platform2.shared.documents.ntaf.NtafTransferableDocumentObject" action="ShowRunningTest" subharness="http://spirent.com/NTAF/harness/iTest/LandslideRest/Main" harness="http://spirent.com/NTAF/harness/iTest/LandslideRest/Main" harnessName="http://spirent.com/NTAF/harness/iTest/LandslideRest/Main" runningTestId="[runId0]" runningTestId.inherit="false" fullInfo="true" fullInfo.inherit="false"/>
+                        </item>
+                    </nestedSteps>
+                    <applicationProperties type="com.fnfr.svt.documents.EmptyPropertyGroup"/>
+                </item>
+                <item guid="bfcb6fef-c7c3-49fe-b519-8e8b3cfae7f4" action="comment" useFieldsInCommand="false">
+                    <command>
+                        <body>check pass/fail</body>
+                    </command>
+                    <nestedSteps>
+                        <item guid="7e5ad289-8659-449a-b615-32332a7021e8" action="ShowRunningTestFavoritesMeasurements" session="Landslide TAS Abstract Group/TS 1" skip="true" normalOffset="9.805" estimatedStepExecutionTime="0.25" useFieldsInCommand="false">
+                            <command>
+                                <body>-runningTestId [runId0]</body>
+                            </command>
+                            <postProcessing>
+                                <analysisRules>
+                                    <item>
+                                        <extractorInfo extractorType="regex">
+                                            <extractorProperties type="com.fnfr.svt.mapping.regex.extractors.RegexExtractorPropertyGroup" useLineMode="true">
+                                                <regex>^\\s+MM::Registration Requests :\\s+(\\d+)$</regex>
+                                            </extractorProperties>
+                                        </extractorInfo>
+                                        <processorInfo ruleType="store">
+                                            <ruleProperties type="com.fnfr.svt.execution.builtin.processors.StoreProcessorPropertyGroup">
+                                                <storageLocation>RegReq</storageLocation>
+                                                <responseValue type="com.fnfr.documents.PropertyBoolean">false</responseValue>
+                                                <variable type="com.fnfr.documents.PropertyBoolean">true</variable>
+                                                <secret type="com.fnfr.documents.PropertyBoolean">false</secret>
+                                            </ruleProperties>
+                                        </processorInfo>
+                                    </item>
+                                    <item>
+                                        <extractorInfo extractorType="regex">
+                                            <extractorProperties type="com.fnfr.svt.mapping.regex.extractors.RegexExtractorPropertyGroup" useLineMode="true">
+                                                <regex>^\\s+MM::Registration Completes :\\s+(\\d+)$</regex>
+                                            </extractorProperties>
+                                        </extractorInfo>
+                                        <processorInfo ruleType="message">
+                                            <ruleProperties type="com.fnfr.svt.execution.builtin.processors.MessageProcessorPropertyGroup" severity="Information">
+                                                <message>Registration Completes - &quot;{value}&quot;</message>
+                                                <tag sub="false" defaultValue=""/>
+                                            </ruleProperties>
+                                        </processorInfo>
+                                    </item>
+                                    <item>
+                                        <extractorInfo extractorType="regex">
+                                            <extractorProperties type="com.fnfr.svt.mapping.regex.extractors.RegexExtractorPropertyGroup" useLineMode="true">
+                                                <regex>^\\s+Test Summary::Session Registers :\\s+(\\d+)$</regex>
+                                            </extractorProperties>
+                                        </extractorInfo>
+                                        <processorInfo ruleType="store">
+                                            <ruleProperties type="com.fnfr.svt.execution.builtin.processors.StoreProcessorPropertyGroup">
+                                                <storageLocation>SessionRegisters</storageLocation>
+                                                <responseValue type="com.fnfr.documents.PropertyBoolean">false</responseValue>
+                                                <variable type="com.fnfr.documents.PropertyBoolean">true</variable>
+                                                <secret type="com.fnfr.documents.PropertyBoolean">false</secret>
+                                            </ruleProperties>
+                                        </processorInfo>
+                                    </item>
+                                    <item>
+                                        <extractorInfo extractorType="regex">
+                                            <extractorProperties type="com.fnfr.svt.mapping.regex.extractors.RegexExtractorPropertyGroup" useLineMode="true">
+                                                <regex>^\\s+Test Summary::Session Deregisters :\\s+(\\d+)$</regex>
+                                            </extractorProperties>
+                                        </extractorInfo>
+                                        <processorInfo ruleType="store">
+                                            <ruleProperties type="com.fnfr.svt.execution.builtin.processors.StoreProcessorPropertyGroup">
+                                                <storageLocation>SessionDeregister</storageLocation>
+                                                <responseValue type="com.fnfr.documents.PropertyBoolean">false</responseValue>
+                                                <variable type="com.fnfr.documents.PropertyBoolean">true</variable>
+                                                <secret type="com.fnfr.documents.PropertyBoolean">false</secret>
+                                            </ruleProperties>
+                                        </processorInfo>
+                                    </item>
+                                    <item>
+                                        <extractorInfo extractorType="regex">
+                                            <extractorProperties type="com.fnfr.svt.mapping.regex.extractors.RegexExtractorPropertyGroup" useLineMode="true">
+                                                <regex>^\\s+MM::Registration Rejects :\\s+(\\d+)$</regex>
+                                            </extractorProperties>
+                                        </extractorInfo>
+                                        <processorInfo ruleType="assert">
+                                            <ruleProperties type="com.fnfr.svt.execution.builtin.processors.AssertionPropertyGroup">
+                                                <expression>int(value) == 0</expression>
+                                                <actionsWhenTrue>
+                                                    <item actionId="PassTestIfNotAlreadyFailed">
+                                                        <actionProperties type="com.fnfr.svt.documents.EmptyPropertyGroup"/>
+                                                    </item>
+                                                    <item actionId="DeclareExecutionIssue">
+                                                        <actionProperties type="com.fnfr.svt.execution.builtin.actions.ExecutionIssuePropertyGroup" severity="OK">
+                                                            <message>{auto_message_true}</message>
+                                                        </actionProperties>
+                                                    </item>
+                                                </actionsWhenTrue>
+                                                <actionsWhenFalse>
+                                                    <item actionId="FailTest">
+                                                        <actionProperties type="com.fnfr.svt.documents.EmptyPropertyGroup"/>
+                                                    </item>
+                                                    <item actionId="DeclareExecutionIssue">
+                                                        <actionProperties type="com.fnfr.svt.execution.builtin.actions.ExecutionIssuePropertyGroup">
+                                                            <message>Registration Rejects Identified &quot;{value}&quot;</message>
+                                                        </actionProperties>
+                                                    </item>
+                                                </actionsWhenFalse>
+                                            </ruleProperties>
+                                        </processorInfo>
+                                    </item>
+                                </analysisRules>
+                            </postProcessing>
+                            <applicationProperties type="com.fnfr.itest.platform2.shared.documents.ntaf.NtafTransferableDocumentObject" action="ShowRunningTestFavoritesMeasurements" subharness="http://spirent.com/NTAF/harness/iTest/LandslideRest/Main" harness="http://spirent.com/NTAF/harness/iTest/LandslideRest/Main" harnessName="http://spirent.com/NTAF/harness/iTest/LandslideRest/Main" runningTestId="[runId0]" runningTestId.inherit="false"/>
+                        </item>
+                        <item guid="cca852d8-0acb-45a6-969f-6e7f9e55fc5a" action="ShowRunningTestMeasurements" session="Landslide TAS Abstract Group/TS 1" useFieldsInCommand="false">
+                            <command>
+                                <body>-runningTestId [runId0]</body>
+                            </command>
+                            <postProcessing>
+                                <analysisRules>
+                                    <item>
+                                        <extractorInfo extractorType="regex">
+                                            <extractorProperties type="com.fnfr.svt.mapping.regex.extractors.RegexExtractorPropertyGroup" useLineMode="true">
+                                                <regex>^\\s+Registration Requests\\s+:\\s+(\\d+)$</regex>
+                                            </extractorProperties>
+                                        </extractorInfo>
+                                        <processorInfo ruleType="store">
+                                            <ruleProperties type="com.fnfr.svt.execution.builtin.processors.StoreProcessorPropertyGroup">
+                                                <storageLocation>RegReq</storageLocation>
+                                                <responseValue type="com.fnfr.documents.PropertyBoolean">false</responseValue>
+                                                <variable type="com.fnfr.documents.PropertyBoolean">true</variable>
+                                                <secret type="com.fnfr.documents.PropertyBoolean">false</secret>
+                                            </ruleProperties>
+                                        </processorInfo>
+                                    </item>
+                                    <item>
+                                        <extractorInfo extractorType="regex">
+                                            <extractorProperties type="com.fnfr.svt.mapping.regex.extractors.RegexExtractorPropertyGroup" useLineMode="true">
+                                                <regex>^\\s+Registration Completes\\s+:\\s+(\\d+)$</regex>
+                                            </extractorProperties>
+                                        </extractorInfo>
+                                        <processorInfo ruleType="message">
+                                            <ruleProperties type="com.fnfr.svt.execution.builtin.processors.MessageProcessorPropertyGroup" severity="Information">
+                                                <message>Registration Completes :  &quot;{value}&quot;</message>
+                                                <tag sub="false" defaultValue=""/>
+                                            </ruleProperties>
+                                        </processorInfo>
+                                    </item>
+                                    <item>
+                                        <extractorInfo extractorType="regex">
+                                            <extractorProperties type="com.fnfr.svt.mapping.regex.extractors.RegexExtractorPropertyGroup" useLineMode="true">
+                                                <regex>^\\s+Session Registers\\s+:\\s+(\\d+)$</regex>
+                                            </extractorProperties>
+                                        </extractorInfo>
+                                        <processorInfo ruleType="store">
+                                            <ruleProperties type="com.fnfr.svt.execution.builtin.processors.StoreProcessorPropertyGroup">
+                                                <storageLocation>SessionRegisters</storageLocation>
+                                                <responseValue type="com.fnfr.documents.PropertyBoolean">false</responseValue>
+                                                <variable type="com.fnfr.documents.PropertyBoolean">true</variable>
+                                                <secret type="com.fnfr.documents.PropertyBoolean">false</secret>
+                                            </ruleProperties>
+                                        </processorInfo>
+                                    </item>
+                                    <item>
+                                        <extractorInfo extractorType="regex">
+                                            <extractorProperties type="com.fnfr.svt.mapping.regex.extractors.RegexExtractorPropertyGroup" useLineMode="true">
+                                                <regex>^\\s+Session Deregisters\\s+:\\s+(\\d+)$</regex>
+                                            </extractorProperties>
+                                        </extractorInfo>
+                                        <processorInfo ruleType="store">
+                                            <ruleProperties type="com.fnfr.svt.execution.builtin.processors.StoreProcessorPropertyGroup">
+                                                <storageLocation>SessionDeregisters</storageLocation>
+                                                <responseValue type="com.fnfr.documents.PropertyBoolean">false</responseValue>
+                                                <variable type="com.fnfr.documents.PropertyBoolean">true</variable>
+                                                <secret type="com.fnfr.documents.PropertyBoolean">false</secret>
+                                            </ruleProperties>
+                                        </processorInfo>
+                                    </item>
+                                    <item>
+                                        <extractorInfo extractorType="regex">
+                                            <extractorProperties type="com.fnfr.svt.mapping.regex.extractors.RegexExtractorPropertyGroup" useLineMode="true">
+                                                <regex>^\\s+Registration Rejects\\s+:\\s+(\\d+)$</regex>
+                                            </extractorProperties>
+                                        </extractorInfo>
+                                        <processorInfo ruleType="assert">
+                                            <ruleProperties type="com.fnfr.svt.execution.builtin.processors.AssertionPropertyGroup">
+                                                <expression>int(value) == 0</expression>
+                                                <actionsWhenTrue>
+                                                    <item actionId="PassTestIfNotAlreadyFailed">
+                                                        <actionProperties type="com.fnfr.svt.documents.EmptyPropertyGroup"/>
+                                                    </item>
+                                                    <item actionId="DeclareExecutionIssue">
+                                                        <actionProperties type="com.fnfr.svt.execution.builtin.actions.ExecutionIssuePropertyGroup" severity="OK">
+                                                            <message>No Registration Rejects</message>
+                                                        </actionProperties>
+                                                    </item>
+                                                </actionsWhenTrue>
+                                                <actionsWhenFalse>
+                                                    <item actionId="FailTest">
+                                                        <actionProperties type="com.fnfr.svt.documents.EmptyPropertyGroup"/>
+                                                    </item>
+                                                    <item actionId="DeclareExecutionIssue">
+                                                        <actionProperties type="com.fnfr.svt.execution.builtin.actions.ExecutionIssuePropertyGroup">
+                                                            <message>&quot;{value}&quot; Registration Rejects !!</message>
+                                                        </actionProperties>
+                                                    </item>
+                                                </actionsWhenFalse>
+                                            </ruleProperties>
+                                        </processorInfo>
+                                    </item>
+                                </analysisRules>
+                            </postProcessing>
+                            <applicationProperties type="com.fnfr.itest.platform2.shared.documents.ntaf.NtafTransferableDocumentObject" action="ShowRunningTestMeasurements" subharness="http://spirent.com/NTAF/harness/iTest/LandslideRest/Main" harness="http://spirent.com/NTAF/harness/iTest/LandslideRest/Main" harnessName="http://spirent.com/NTAF/harness/iTest/LandslideRest/Main" runningTestId="[runId0]" runningTestId.inherit="false"/>
+                        </item>
+                        <item guid="92b24826-6506-4290-8448-86c387f89cde" action="DeleteAllCompletedTests" session="Landslide TAS Abstract Group/TS 1" normalOffset="27.05" estimatedStepExecutionTime="0.175" useFieldsInCommand="false">
+                            <applicationProperties type="com.fnfr.itest.platform2.shared.documents.ntaf.NtafTransferableDocumentObject" action="DeleteAllCompletedTests" subharness="http://spirent.com/NTAF/harness/iTest/LandslideRest/Main" harness="http://spirent.com/NTAF/harness/iTest/LandslideRest/Main" harnessName="http://spirent.com/NTAF/harness/iTest/LandslideRest/Main"/>
+                        </item>
+                        <item guid="dec1f1c6-7b9e-4258-adb1-670c946f7a33" action="close" session="Landslide TAS Abstract Group/TS 1" normalOffset="5.412" useFieldsInCommand="false">
+                            <applicationProperties type="com.fnfr.svt.documents.EmptyPropertyGroup"/>
+                        </item>
+                    </nestedSteps>
+                    <applicationProperties type="com.fnfr.svt.documents.EmptyPropertyGroup"/>
+                </item>
+            </steps>
+        </item>
+    </procedures>
+</testCase>

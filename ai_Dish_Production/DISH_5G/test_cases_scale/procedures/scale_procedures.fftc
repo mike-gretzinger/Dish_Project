@@ -1,0 +1,282 @@
+<?xml version="1.0"?>
+<testCase version="9.1.1.202209201235">
+    <general>
+        <documentation>Scale Procedures</documentation>
+        <owner>Michael Gretzinger</owner>
+        <isProcedureLibrary>true</isProcedureLibrary>
+        <language>Python</language>
+    </general>
+    <procedures>
+        <item name="main">
+            <steps>
+                <item guid="aed34b5e-a830-49a7-8af3-774fb80c4821" action="comment" useFieldsInCommand="false">
+                    <applicationProperties type="com.fnfr.svt.documents.EmptyPropertyGroup"/>
+                </item>
+            </steps>
+        </item>
+        <item name="getParameterGroupDict" isPublic="true">
+            <steps>
+                <item guid="1ee7e132-b7da-4f00-841f-62d85a2bf89a" action="eval" useFieldsInCommand="false">
+                    <command>
+                        <body>import copy</body>
+                    </command>
+                    <applicationProperties type="com.fnfr.svt.documents.EmptyPropertyGroup"/>
+                </item>
+                <item guid="3b7144d9-ec6e-4632-8cb3-762fb3cbe921" action="eval" useFieldsInCommand="false">
+                    <command>
+                        <body>count = param(&apos;count(&apos;+param_path+&apos;/*)&apos;)</body>
+                    </command>
+                    <applicationProperties type="com.fnfr.svt.documents.EmptyPropertyGroup"/>
+                </item>
+                <item guid="f2bb9e6b-30ad-4148-9cc6-0bcfac62442d" action="eval" useFieldsInCommand="false">
+                    <command>
+                        <body>count</body>
+                    </command>
+                    <applicationProperties type="com.fnfr.svt.documents.EmptyPropertyGroup"/>
+                </item>
+                <item guid="a86adb83-8eb7-44bb-93d4-af31739875aa" action="eval" useFieldsInCommand="false">
+                    <command>
+                        <body>return_dict = {}</body>
+                    </command>
+                    <applicationProperties type="com.fnfr.svt.documents.EmptyPropertyGroup"/>
+                </item>
+                <item guid="7955648f-ee64-4ccf-8cff-3da1d6b5620f" action="for" useFieldsInCommand="false">
+                    <command>
+                        <body>i in range(1, int(count)+1):</body>
+                    </command>
+                    <nestedSteps>
+                        <item guid="51d9ff4e-08e0-4f49-84e9-9fed9c3a4e1d" action="eval" useFieldsInCommand="false">
+                            <command>
+                                <body>name  = param(&apos;name(&apos;+param_path+&apos;/*[&apos;+str(i)+&apos;])&apos;)</body>
+                            </command>
+                            <applicationProperties type="com.fnfr.svt.documents.EmptyPropertyGroup"/>
+                        </item>
+                        <item guid="d4ded1ef-1f4f-4b26-a59e-8ec0c029a208" action="eval" useFieldsInCommand="false">
+                            <command>
+                                <body>value  = param(param_path+&apos;/*[&apos;+str(i)+&apos;]&apos;)</body>
+                            </command>
+                            <eventHandlers>
+                                <item name="OnInterpreterError">
+                                    <item actionId="Eval">
+                                        <actionProperties type="com.fnfr.svt.execution.builtin.actions.EvalActionPropertyGroup">
+                                            <statement>value = [1,2]</statement>
+                                        </actionProperties>
+                                    </item>
+                                </item>
+                            </eventHandlers>
+                            <applicationProperties type="com.fnfr.svt.documents.EmptyPropertyGroup"/>
+                        </item>
+                        <item guid="f6649a5d-8d9f-4ab4-8631-9fb5bba06d03" action="eval" useFieldsInCommand="false">
+                            <command>
+                                <body>name = name.replace(&apos;fiveg&apos;,&apos;5g&apos;)</body>
+                            </command>
+                            <applicationProperties type="com.fnfr.svt.documents.EmptyPropertyGroup"/>
+                        </item>
+                        <item guid="d28c7560-a6c9-458a-88f4-3bb1b8203ec3" action="eval" useFieldsInCommand="false">
+                            <command>
+                                <body>value</body>
+                            </command>
+                            <applicationProperties type="com.fnfr.svt.documents.EmptyPropertyGroup"/>
+                        </item>
+                        <item guid="9a484d39-e651-4418-b3d7-2b58c2558c96" action="if" useFieldsInCommand="false">
+                            <command>
+                                <body>name == &apos;item&apos;:</body>
+                            </command>
+                            <nestedSteps>
+                                <item guid="76a2795b-f3b7-45d5-9739-1a09a62eec85" action="eval" useFieldsInCommand="false">
+                                    <command>
+                                        <body>tlist = []</body>
+                                    </command>
+                                    <applicationProperties type="com.fnfr.svt.documents.EmptyPropertyGroup"/>
+                                </item>
+                                <item guid="443d2bcc-8a6d-4ea6-9f54-838edfe9bcf7" action="for" useFieldsInCommand="false">
+                                    <command>
+                                        <body>j in range(1, int(count)+1):</body>
+                                    </command>
+                                    <nestedSteps>
+                                        <item guid="02b3ab55-d227-4b19-9c65-e1a1b93cf629" action="call" useFieldsInCommand="false">
+                                            <command>
+                                                <body>getParameterGroupDict(param_path=param_path + &apos;/item[&apos; + str(j) + &apos;]&apos;, insert_parent=&apos;false&apos;)</body>
+                                            </command>
+                                            <postProcessing>
+                                                <storeResponseAt>ret_dict</storeResponseAt>
+                                                <storeResponseText>true</storeResponseText>
+                                            </postProcessing>
+                                            <applicationProperties type="com.fnfr.svt.documents.EmptyPropertyGroup"/>
+                                        </item>
+                                        <item guid="0a2e1980-57d7-4299-83fd-373176a55cb2" action="eval" useFieldsInCommand="false">
+                                            <command>
+                                                <body>tlist.append(copy.deepcopy(ret_dict))</body>
+                                            </command>
+                                            <applicationProperties type="com.fnfr.svt.documents.EmptyPropertyGroup"/>
+                                        </item>
+                                    </nestedSteps>
+                                    <applicationProperties type="com.fnfr.svt.documents.EmptyPropertyGroup"/>
+                                </item>
+                                <item guid="a5fd5793-8578-4d8c-be42-caa06decb8f1" action="eval" useFieldsInCommand="false">
+                                    <command>
+                                        <body>return_dict = tlist</body>
+                                    </command>
+                                    <applicationProperties type="com.fnfr.svt.documents.EmptyPropertyGroup"/>
+                                </item>
+                                <item guid="bde47f30-e2f2-4164-a493-bedb89e8b386" action="break" useFieldsInCommand="false">
+                                    <applicationProperties type="com.fnfr.svt.documents.EmptyPropertyGroup"/>
+                                </item>
+                            </nestedSteps>
+                            <applicationProperties type="com.fnfr.svt.documents.EmptyPropertyGroup"/>
+                        </item>
+                        <item guid="843d5564-2371-4861-a59a-c7ffd1d7157d" action="elif" useFieldsInCommand="false">
+                            <command>
+                                <body>type(value) == list and name != &apos;array&apos;:</body>
+                            </command>
+                            <nestedSteps>
+                                <item guid="fdda61c9-68c7-4918-b69a-b854e951b3e5" action="call" useFieldsInCommand="false">
+                                    <command>
+                                        <body>getParameterGroupDict(param_path=param_path+&apos;/&apos;+name, insert_parent=&apos;false&apos;)</body>
+                                    </command>
+                                    <postProcessing>
+                                        <storeResponseAt>ret_dict</storeResponseAt>
+                                        <storeResponseText>true</storeResponseText>
+                                    </postProcessing>
+                                    <applicationProperties type="com.fnfr.svt.documents.EmptyPropertyGroup"/>
+                                </item>
+                                <item guid="91c46f37-5e74-4c59-bc49-7395e59e22ff" action="eval" useFieldsInCommand="false">
+                                    <command>
+                                        <body>return_dict[name] = ret_dict</body>
+                                    </command>
+                                    <applicationProperties type="com.fnfr.svt.documents.EmptyPropertyGroup"/>
+                                </item>
+                            </nestedSteps>
+                            <applicationProperties type="com.fnfr.svt.documents.EmptyPropertyGroup"/>
+                        </item>
+                        <item guid="b6b10a03-8c39-45b9-8cb3-408001de56b7" action="else" useFieldsInCommand="false">
+                            <nestedSteps>
+                                <item guid="ccbf837a-6960-421d-a9b9-9723bf3f8ec8" action="eval" useFieldsInCommand="false">
+                                    <command>
+                                        <body>return_dict[name] = str(value)</body>
+                                    </command>
+                                    <applicationProperties type="com.fnfr.svt.documents.EmptyPropertyGroup"/>
+                                </item>
+                            </nestedSteps>
+                            <applicationProperties type="com.fnfr.svt.documents.EmptyPropertyGroup"/>
+                        </item>
+                    </nestedSteps>
+                    <applicationProperties type="com.fnfr.svt.documents.EmptyPropertyGroup"/>
+                </item>
+                <item guid="e00e7daa-9d8b-45ee-88b2-3af86c0c43c9" action="if" useFieldsInCommand="false">
+                    <command>
+                        <body>insert_parent == &apos;true&apos;:</body>
+                    </command>
+                    <nestedSteps>
+                        <item guid="cf0e6b71-2e0f-45f9-812f-4597f8e84c00" action="eval" useFieldsInCommand="false">
+                            <command>
+                                <body>rett = {param_path.split(&apos;/&apos;)[-1]: return_dict}</body>
+                            </command>
+                            <applicationProperties type="com.fnfr.svt.documents.EmptyPropertyGroup"/>
+                        </item>
+                    </nestedSteps>
+                    <applicationProperties type="com.fnfr.svt.documents.EmptyPropertyGroup"/>
+                </item>
+                <item guid="69ac7460-0591-475a-ad75-425d0161cb42" action="else" useFieldsInCommand="false">
+                    <nestedSteps>
+                        <item guid="35e05d97-d98b-4bf3-a329-22af4ad5178c" action="eval" useFieldsInCommand="false">
+                            <command>
+                                <body>rett = return_dict</body>
+                            </command>
+                            <applicationProperties type="com.fnfr.svt.documents.EmptyPropertyGroup"/>
+                        </item>
+                    </nestedSteps>
+                    <applicationProperties type="com.fnfr.svt.documents.EmptyPropertyGroup"/>
+                </item>
+                <item guid="308c7d46-3ab8-46b6-b4b1-39c8a173fefd" action="return">
+                    <command>
+                        <body>[rett]</body>
+                    </command>
+                    <applicationProperties type="com.fnfr.svt.documents.EmptyPropertyGroup"/>
+                </item>
+            </steps>
+            <arguments>
+                <item name="param_path">
+                    <isMandatory>true</isMandatory>
+                </item>
+                <item name="insert_parent">
+                    <description>true|false, only used for childen of lists</description>
+                    <defaultValue>true</defaultValue>
+                </item>
+            </arguments>
+        </item>
+        <item name="getLastValuesCsvDict" isPublic="true">
+            <steps>
+                <item guid="dc2c2191-a6aa-40ef-86c2-4d1b2d2984af" action="eval" useFieldsInCommand="false">
+                    <command>
+                        <body>ret_dict = {}</body>
+                    </command>
+                    <applicationProperties type="com.fnfr.svt.documents.EmptyPropertyGroup"/>
+                </item>
+                <item guid="158e330a-3b09-45d3-94bd-fa88f3e6870f" action="comment" useFieldsInCommand="false">
+                    <command>
+                        <body>get last key</body>
+                    </command>
+                    <nestedSteps>
+                        <item guid="35d07d1a-a36f-4fec-b232-acd47d5c3e0b" action="eval" useFieldsInCommand="false">
+                            <command>
+                                <body>last_key = [*input_results_dict[group]][-1]</body>
+                            </command>
+                            <applicationProperties type="com.fnfr.svt.documents.EmptyPropertyGroup"/>
+                        </item>
+                    </nestedSteps>
+                    <applicationProperties type="com.fnfr.svt.documents.EmptyPropertyGroup"/>
+                </item>
+                <item guid="a43d6e31-9db8-4729-b975-db1b75141ccc" action="for" useFieldsInCommand="false">
+                    <command>
+                        <body>item in item_list:</body>
+                    </command>
+                    <nestedSteps>
+                        <item guid="6dfc9c73-1802-4b86-8e3f-c63ed094dddb" action="eval" useFieldsInCommand="false">
+                            <command>
+                                <body>indx = int([i for i, s in enumerate(input_results_dict[group][&apos;headers&apos;]) if item in s][0])</body>
+                            </command>
+                            <applicationProperties type="com.fnfr.svt.documents.EmptyPropertyGroup"/>
+                        </item>
+                        <item guid="d275002d-146a-4f41-9fd9-1a5d4b9aa720" action="eval" useFieldsInCommand="false">
+                            <command>
+                                <body>indx</body>
+                            </command>
+                            <applicationProperties type="com.fnfr.svt.documents.EmptyPropertyGroup"/>
+                        </item>
+                        <item guid="f91d6e65-f32c-4be6-bf3f-7a09482b5c4a" action="eval" useFieldsInCommand="false">
+                            <command>
+                                <body>item</body>
+                            </command>
+                            <applicationProperties type="com.fnfr.svt.documents.EmptyPropertyGroup"/>
+                        </item>
+                        <item guid="4c33c751-549e-450f-b732-e79a5c6973b6" action="eval" useFieldsInCommand="false">
+                            <command>
+                                <body>ret_dict[item] = input_results_dict[group][last_key][indx]</body>
+                            </command>
+                            <applicationProperties type="com.fnfr.svt.documents.EmptyPropertyGroup"/>
+                        </item>
+                    </nestedSteps>
+                    <applicationProperties type="com.fnfr.svt.documents.EmptyPropertyGroup"/>
+                </item>
+                <item guid="0f3a4029-4761-4acf-a666-a30d1d7a4d8c" action="return">
+                    <command>
+                        <body>[ret_dict]</body>
+                    </command>
+                    <applicationProperties type="com.fnfr.svt.documents.EmptyPropertyGroup"/>
+                </item>
+            </steps>
+            <arguments>
+                <item name="input_results_dict">
+                    <isMandatory>true</isMandatory>
+                </item>
+                <item name="group">
+                    <isMandatory>true</isMandatory>
+                </item>
+                <item name="item_list">
+                    <isMandatory>true</isMandatory>
+                </item>
+            </arguments>
+        </item>
+    </procedures>
+</testCase>

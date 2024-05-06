@@ -1,0 +1,123 @@
+<?xml version="1.0"?>
+<testCase version="9.1.1.202209201235">
+    <general>
+        <documentation>5G_HC_001 Verify overall system health of AMF</documentation>
+        <tags>5G_HC_001, Automation_Next_Gen_Framework</tags>
+        <notes>Test Purpose: The purpose of this test is to check overall system health of AMF. 
+Pre-requisites/Test Environment:
+•\tAMF login Credentials.
+•\tIP Address of AMF required for accessing the NE.
+Test Dependencies:
+•\tPutty is required for Login to AMF.
+Test parameter and Tools:
+•\tInternal Logs.
+Test Procedure:
+•\tLogin to AMF using credentials.
+•\tRun health check using command. (e.g. sudo cmm_monitor -vvv).
+•\tHealth status will display on screen.
+Expected Result/Post Condition: 
+•\tVerify command runs successfully.
+•\tVerify there is no error in the status of AMF.</notes>
+        <language>Python</language>
+    </general>
+    <procedures>
+        <item name="main">
+            <steps>
+                <item guid="fd1a2d84-b32c-4779-b799-77a8044aeb14" action="comment" useFieldsInCommand="false">
+                    <applicationProperties type="com.fnfr.svt.documents.EmptyPropertyGroup"/>
+                </item>
+                <item guid="1df4e5a2-786c-470f-96d5-142673894821" action="comment" useFieldsInCommand="false">
+                    <command>
+                        <body>Perform Health Check</body>
+                    </command>
+                    <nestedSteps>
+                        <item guid="b9654bfe-5efc-43be-b33d-fa2f62fee397" action="if" useFieldsInCommand="false">
+                            <command>
+                                <body>param(&apos;AMF/hostname&apos;) != &quot;&quot;:</body>
+                            </command>
+                            <nestedSteps>
+                                <item guid="fc361ce3-cc7c-4358-9dd5-d0f07fc1d18e" action="eval" useFieldsInCommand="false">
+                                    <command>
+                                        <body>ipAddr = param(&apos;AMF/hostname&apos;)</body>
+                                    </command>
+                                    <applicationProperties type="com.fnfr.svt.documents.EmptyPropertyGroup"/>
+                                </item>
+                            </nestedSteps>
+                            <applicationProperties type="com.fnfr.svt.documents.EmptyPropertyGroup"/>
+                        </item>
+                        <item guid="154c6d97-205b-4d49-81d4-272b0d5ca64b" action="else" useFieldsInCommand="false">
+                            <nestedSteps>
+                                <item guid="9ffed82d-8505-4184-b782-792b9cfc6dfb" action="eval" useFieldsInCommand="false">
+                                    <command>
+                                        <body>ipAddr = param(&apos;AMF/ip_address&apos;)</body>
+                                    </command>
+                                    <applicationProperties type="com.fnfr.svt.documents.EmptyPropertyGroup"/>
+                                </item>
+                            </nestedSteps>
+                            <applicationProperties type="com.fnfr.svt.documents.EmptyPropertyGroup"/>
+                        </item>
+                        <item guid="bdf4afc7-01d9-456a-9062-6a4ee0454e4f" action="open" session="AMF">
+                            <command>
+                                <body>project://di_[param(&apos;AMF/make&apos;)]/session_profiles/AMF.ffsp</body>
+                            </command>
+                            <applicationProperties type="com.fnfr.svt.documents.OpenStepPropertyGroup">
+                                <stepProperties type="com.fnfr.svt.editors.terminal.documents.StepDefaultProperties"/>
+                                <sessionProperties type="com.fnfr.svt.applications.ssh.documents.SSHProperties">
+                                    <ipAddress inherit="false">[ipAddr]</ipAddress>
+                                    <user inherit="false">[param(&apos;AMF/username&apos;)]</user>
+                                    <password inherit="false" masked="false">[param(&apos;AMF/password&apos;)]</password>
+                                </sessionProperties>
+                                <sessionClass type="com.fnfr.svt.documents.EmptyPropertyGroup"/>
+                                <sessionVersion type="com.fnfr.svt.documents.EmptyPropertyGroup"/>
+                            </applicationProperties>
+                            <advancedProperties defaultSessionProfile="project://di_Nokia/session_profiles/AMF.ffsp"/>
+                        </item>
+                        <item guid="9b4b1476-8956-478e-960e-4e2ad4a1b17c" action="get_overall_status" session="AMF" useFieldsInCommand="false">
+                            <postProcessing>
+                                <analysisRules>
+                                    <item>
+                                        <extractorInfo extractorType="query">
+                                            <extractorProperties type="com.fnfr.svt.mapping.execution.extractors.QueryDataExtractorPropertyGroup">
+                                                <query>status()</query>
+                                            </extractorProperties>
+                                        </extractorInfo>
+                                        <processorInfo ruleType="assert">
+                                            <ruleProperties type="com.fnfr.svt.execution.builtin.processors.AssertionPropertyGroup">
+                                                <expression>value == &apos;OK&apos;</expression>
+                                                <actionsWhenTrue>
+                                                    <item actionId="DeclareExecutionIssue">
+                                                        <actionProperties type="com.fnfr.svt.execution.builtin.actions.ExecutionIssuePropertyGroup" severity="OK">
+                                                            <message>AMF Status OK</message>
+                                                        </actionProperties>
+                                                    </item>
+                                                    <item actionId="PassTestIfNotAlreadyFailed">
+                                                        <actionProperties type="com.fnfr.svt.documents.EmptyPropertyGroup"/>
+                                                    </item>
+                                                </actionsWhenTrue>
+                                                <actionsWhenFalse>
+                                                    <item actionId="DeclareExecutionIssue">
+                                                        <actionProperties type="com.fnfr.svt.execution.builtin.actions.ExecutionIssuePropertyGroup">
+                                                            <message>AMF Status NOK</message>
+                                                        </actionProperties>
+                                                    </item>
+                                                    <item actionId="FailTest">
+                                                        <actionProperties type="com.fnfr.svt.documents.EmptyPropertyGroup"/>
+                                                    </item>
+                                                </actionsWhenFalse>
+                                            </ruleProperties>
+                                        </processorInfo>
+                                    </item>
+                                </analysisRules>
+                            </postProcessing>
+                            <applicationProperties type="com.fnfr.svt.editors.terminal.documents.StepDefaultProperties"/>
+                        </item>
+                    </nestedSteps>
+                    <applicationProperties type="com.fnfr.svt.documents.EmptyPropertyGroup"/>
+                </item>
+                <item guid="f44514ee-d40e-4e4b-8fee-b2a33fe63131" action="comment" useFieldsInCommand="false">
+                    <applicationProperties type="com.fnfr.svt.documents.EmptyPropertyGroup"/>
+                </item>
+            </steps>
+        </item>
+    </procedures>
+</testCase>
