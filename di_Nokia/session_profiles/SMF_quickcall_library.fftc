@@ -1,0 +1,143 @@
+<?xml version="1.0"?>
+<testCase version="9.0.4.202208111512">
+    <general>
+        <sessionClass includeTestCase="true" sessionType="SMF.ffsp"/>
+        <language>Python</language>
+        <xPathVersion>XPATH31</xPathVersion>
+    </general>
+    <procedures>
+        <item name="main"/>
+        <item name="delete_supi" isPublic="true">
+            <steps>
+                <item guid="c9947a7d-1e61-4234-a6ed-0eb91e474238" action="command" session="[session]">
+                    <command>
+                        <body>clear mobile-gateway pdn 1 bearer-context imsi [supi]</body>
+                    </command>
+                    <applicationProperties type="com.fnfr.svt.editors.terminal.documents.StepDefaultProperties"/>
+                </item>
+            </steps>
+            <arguments>
+                <item name="supi">
+                    <isMandatory>true</isMandatory>
+                </item>
+            </arguments>
+        </item>
+        <item name="get_subscriber_pdus" isPublic="true">
+            <steps>
+                <item guid="753d1b16-2bd8-41f2-baf7-4ff7007f714f" action="command" session="[session]" responseMap="project://di_Nokia/response_maps/smf_imsi_bearer_control.ffrm" useResponseMapLibraryApplicability="false">
+                    <command>
+                        <body>show mobile-gateway pdn bearer-context imsi [supi] bearer-traffic</body>
+                    </command>
+                    <postProcessing>
+                        <analysisRules>
+                            <item>
+                                <extractorInfo extractorType="query">
+                                    <extractorProperties type="com.fnfr.svt.mapping.execution.extractors.QueryDataExtractorPropertyGroup" declareNoMatchIssue="false">
+                                        <query>pdu()</query>
+                                    </extractorProperties>
+                                </extractorInfo>
+                                <processorInfo ruleType="store">
+                                    <ruleProperties type="com.fnfr.svt.execution.builtin.processors.StoreProcessorPropertyGroup">
+                                        <storageLocation>pdu_list</storageLocation>
+                                        <storeInAList>true</storeInAList>
+                                        <responseValue type="com.fnfr.documents.PropertyBoolean">false</responseValue>
+                                        <variable type="com.fnfr.documents.PropertyBoolean">true</variable>
+                                        <secret type="com.fnfr.documents.PropertyBoolean">false</secret>
+                                    </ruleProperties>
+                                </processorInfo>
+                            </item>
+                        </analysisRules>
+                    </postProcessing>
+                    <applicationProperties type="com.fnfr.svt.editors.terminal.documents.StepDefaultProperties"/>
+                    <useResponseMapLibraryFromSession>false</useResponseMapLibraryFromSession>
+                </item>
+                <item guid="44d2b07c-5b90-4e6f-8658-de86df86ba31" action="if" useFieldsInCommand="false">
+                    <command>
+                        <body>type(pdu_list) == str:</body>
+                    </command>
+                    <nestedSteps>
+                        <item guid="bd73f0fd-af9e-4df7-bc6b-7c9a7aa14fc5" action="return" useFieldsInCommand="false">
+                            <command>
+                                <body>{&quot;pdus&quot;: []}</body>
+                            </command>
+                            <applicationProperties type="com.fnfr.svt.documents.EmptyPropertyGroup"/>
+                        </item>
+                    </nestedSteps>
+                    <applicationProperties type="com.fnfr.svt.documents.EmptyPropertyGroup"/>
+                </item>
+                <item guid="fa6b83c0-afe3-42c9-9d0d-476fe4b1f637" action="else" useFieldsInCommand="false">
+                    <nestedSteps>
+                        <item guid="248994fe-e475-4d6e-b648-89411707ba74" action="eval" useFieldsInCommand="false">
+                            <command>
+                                <body>ret =&apos;{&quot;pdus&quot;:&apos;+str(pdu_list).replace(&quot;\\&apos;&quot;, &apos;&quot;&apos;)+&apos;}&apos;</body>
+                            </command>
+                            <applicationProperties type="com.fnfr.svt.documents.EmptyPropertyGroup"/>
+                        </item>
+                        <item guid="8947f05b-63cf-4d10-a411-9e06cfdbc40c" action="return">
+                            <command>
+                                <body>[ret]</body>
+                            </command>
+                            <applicationProperties type="com.fnfr.svt.documents.EmptyPropertyGroup"/>
+                        </item>
+                    </nestedSteps>
+                    <applicationProperties type="com.fnfr.svt.documents.EmptyPropertyGroup"/>
+                </item>
+            </steps>
+            <arguments>
+                <item name="supi">
+                    <isMandatory>true</isMandatory>
+                </item>
+            </arguments>
+        </item>
+        <item name="get_subscriber_qos_flow" isPublic="true">
+            <steps>
+                <item guid="656bb18a-9c90-4297-b2e9-763421d42156" action="command" session="[session]">
+                    <command>
+                        <body>show mobile-gateway pdn qos-flow supi [supi] detail</body>
+                    </command>
+                    <postProcessing>
+                        <storeResponseAt>ret</storeResponseAt>
+                        <storeResponseText>true</storeResponseText>
+                    </postProcessing>
+                    <applicationProperties type="com.fnfr.svt.editors.terminal.documents.StepDefaultProperties"/>
+                </item>
+                <item guid="040a463f-04b0-4a83-9329-a2a43ddf0bc2" action="return">
+                    <command>
+                        <body>[ret]</body>
+                    </command>
+                    <applicationProperties type="com.fnfr.svt.documents.EmptyPropertyGroup"/>
+                </item>
+            </steps>
+            <arguments>
+                <item name="supi">
+                    <isMandatory>true</isMandatory>
+                </item>
+            </arguments>
+        </item>
+        <item name="get_subscriber_pdn_context" isPublic="true">
+            <steps>
+                <item guid="a949c3b3-d0c0-43f2-ab89-1a64bbe3a06b" action="command" session="[session]">
+                    <command>
+                        <body>show mobile-gateway pdn pdn-context imsi [supi] detail</body>
+                    </command>
+                    <postProcessing>
+                        <storeResponseAt>ret</storeResponseAt>
+                        <storeResponseText>true</storeResponseText>
+                    </postProcessing>
+                    <applicationProperties type="com.fnfr.svt.editors.terminal.documents.StepDefaultProperties"/>
+                </item>
+                <item guid="a3e1938b-881a-43d7-9596-d1218c038711" action="return">
+                    <command>
+                        <body>[ret]</body>
+                    </command>
+                    <applicationProperties type="com.fnfr.svt.documents.EmptyPropertyGroup"/>
+                </item>
+            </steps>
+            <arguments>
+                <item name="supi">
+                    <isMandatory>true</isMandatory>
+                </item>
+            </arguments>
+        </item>
+    </procedures>
+</testCase>
