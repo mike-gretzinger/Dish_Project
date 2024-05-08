@@ -1,0 +1,189 @@
+<?xml version="1.0"?>
+<testCase version="9.1.1.202209201235">
+    <general>
+        <sessionClass includeTestCase="true" sessionType="wireshark.ffsp"/>
+        <language>Python</language>
+        <xPathVersion>XPATH31</xPathVersion>
+    </general>
+    <procedures>
+        <item name="main"/>
+        <item name="apply_filter_get_count" isPublic="true" blockResponseType="JSON">
+            <steps>
+                <item guid="262ac3d7-c010-41af-948e-f2cfecb00010" action="eval" useFieldsInCommand="false">
+                    <command>
+                        <body>filter</body>
+                    </command>
+                    <applicationProperties type="com.fnfr.svt.documents.EmptyPropertyGroup"/>
+                </item>
+                <item guid="ddb50696-8905-4b43-bc17-7f3e21a11453" action="eval" useFieldsInCommand="false">
+                    <command>
+                        <body>status = &apos;OK&apos;</body>
+                    </command>
+                    <applicationProperties type="com.fnfr.svt.documents.EmptyPropertyGroup"/>
+                </item>
+                <item guid="7b8bae91-5d18-4204-9592-f20b1bbb149b" action="eval" useFieldsInCommand="false">
+                    <command>
+                        <body>message = &apos;&apos;</body>
+                    </command>
+                    <applicationProperties type="com.fnfr.svt.documents.EmptyPropertyGroup"/>
+                </item>
+                <item guid="7cbf089c-94d7-4f14-99fd-37ba56cdfeba" action="command" session="[session]">
+                    <command>
+                        <body>query filter set &quot;[filter]&quot;</body>
+                    </command>
+                    <postProcessing>
+                        <analysisRules>
+                            <item>
+                                <extractorInfo extractorType="query">
+                                    <extractorProperties type="com.fnfr.svt.mapping.execution.extractors.QueryDataExtractorPropertyGroup">
+                                        <query>success</query>
+                                    </extractorProperties>
+                                </extractorInfo>
+                                <processorInfo ruleType="assert">
+                                    <ruleProperties type="com.fnfr.svt.execution.builtin.processors.AssertionPropertyGroup">
+                                        <expression>value == &quot;true&quot;</expression>
+                                        <actionsWhenFalse>
+                                            <item actionId="Eval">
+                                                <actionProperties type="com.fnfr.svt.execution.builtin.actions.EvalActionPropertyGroup">
+                                                    <statement>message = &apos;query failed: [filter]&apos;</statement>
+                                                </actionProperties>
+                                            </item>
+                                            <item actionId="Eval">
+                                                <actionProperties type="com.fnfr.svt.execution.builtin.actions.EvalActionPropertyGroup">
+                                                    <statement>status = &apos;NOK&apos;</statement>
+                                                </actionProperties>
+                                            </item>
+                                        </actionsWhenFalse>
+                                    </ruleProperties>
+                                </processorInfo>
+                            </item>
+                        </analysisRules>
+                    </postProcessing>
+                    <eventHandlers>
+                        <item name="OnWiresharkCommandFailed">
+                            <item actionId="Eval">
+                                <actionProperties type="com.fnfr.svt.execution.builtin.actions.EvalActionPropertyGroup">
+                                    <statement>message = &apos;query failed: [filter]&apos;</statement>
+                                </actionProperties>
+                            </item>
+                            <item actionId="Eval">
+                                <actionProperties type="com.fnfr.svt.execution.builtin.actions.EvalActionPropertyGroup">
+                                    <statement>status = &apos;NOK&apos;</statement>
+                                </actionProperties>
+                            </item>
+                        </item>
+                        <item name="OnNoMatchesFound">
+                            <item actionId="Eval">
+                                <actionProperties type="com.fnfr.svt.execution.builtin.actions.EvalActionPropertyGroup">
+                                    <statement>message = &apos;query failed: [filter]&apos;</statement>
+                                </actionProperties>
+                            </item>
+                            <item actionId="Eval">
+                                <actionProperties type="com.fnfr.svt.execution.builtin.actions.EvalActionPropertyGroup">
+                                    <statement>status = &apos;NOK&apos;</statement>
+                                </actionProperties>
+                            </item>
+                        </item>
+                    </eventHandlers>
+                    <applicationProperties type="com.fnfr.svt.documents.EmptyPropertyGroup"/>
+                </item>
+                <item guid="138a1bd2-a589-40d0-a45f-de60e01220db" action="if" useFieldsInCommand="false">
+                    <command>
+                        <body>status == &apos;OK&apos;:</body>
+                    </command>
+                    <nestedSteps>
+                        <item guid="f9065eb7-8ce9-4022-9d30-775122d55c46" action="command" session="[session]">
+                            <command>
+                                <body>query packets</body>
+                            </command>
+                            <postProcessing>
+                                <analysisRules>
+                                    <item>
+                                        <extractorInfo extractorType="query">
+                                            <extractorProperties type="com.fnfr.svt.mapping.execution.extractors.QueryDataExtractorPropertyGroup">
+                                                <query>rowCount</query>
+                                            </extractorProperties>
+                                        </extractorInfo>
+                                        <processorInfo ruleType="store">
+                                            <ruleProperties type="com.fnfr.svt.execution.builtin.processors.StoreProcessorPropertyGroup">
+                                                <storageLocation>var1</storageLocation>
+                                                <query>count</query>
+                                                <responseValue type="com.fnfr.documents.PropertyBoolean">true</responseValue>
+                                                <variable type="com.fnfr.documents.PropertyBoolean">true</variable>
+                                                <secret type="com.fnfr.documents.PropertyBoolean">false</secret>
+                                            </ruleProperties>
+                                        </processorInfo>
+                                    </item>
+                                </analysisRules>
+                            </postProcessing>
+                            <eventHandlers>
+                                <item name="OnWiresharkCommandFailed"/>
+                                <item name="OnNoMatchesFound"/>
+                            </eventHandlers>
+                            <applicationProperties type="com.fnfr.svt.documents.EmptyPropertyGroup"/>
+                        </item>
+                    </nestedSteps>
+                    <applicationProperties type="com.fnfr.svt.documents.EmptyPropertyGroup"/>
+                </item>
+                <item guid="d244ac6d-c555-4440-b3c2-5f17b480da24" action="eval" useFieldsInCommand="false">
+                    <command>
+                        <body>message</body>
+                    </command>
+                    <postProcessing>
+                        <analysisRules>
+                            <item>
+                                <extractorInfo extractorType="query">
+                                    <extractorProperties type="com.fnfr.svt.mapping.execution.extractors.QueryDataExtractorPropertyGroup">
+                                        <query>responseLine()</query>
+                                    </extractorProperties>
+                                </extractorInfo>
+                                <processorInfo ruleType="store">
+                                    <ruleProperties type="com.fnfr.svt.execution.builtin.processors.StoreProcessorPropertyGroup">
+                                        <storageLocation>var1</storageLocation>
+                                        <query>message</query>
+                                        <responseValue type="com.fnfr.documents.PropertyBoolean">true</responseValue>
+                                        <variable type="com.fnfr.documents.PropertyBoolean">true</variable>
+                                        <secret type="com.fnfr.documents.PropertyBoolean">false</secret>
+                                    </ruleProperties>
+                                </processorInfo>
+                            </item>
+                        </analysisRules>
+                    </postProcessing>
+                    <applicationProperties type="com.fnfr.svt.documents.EmptyPropertyGroup"/>
+                </item>
+                <item guid="eaae2edb-08ec-4add-bb10-2e1ea7f44cbc" action="eval" useFieldsInCommand="false">
+                    <command>
+                        <body>status</body>
+                    </command>
+                    <postProcessing>
+                        <analysisRules>
+                            <item>
+                                <extractorInfo extractorType="query">
+                                    <extractorProperties type="com.fnfr.svt.mapping.execution.extractors.QueryDataExtractorPropertyGroup">
+                                        <query>responseLine()</query>
+                                    </extractorProperties>
+                                </extractorInfo>
+                                <processorInfo ruleType="store">
+                                    <ruleProperties type="com.fnfr.svt.execution.builtin.processors.StoreProcessorPropertyGroup">
+                                        <storageLocation>var1</storageLocation>
+                                        <query>status</query>
+                                        <responseValue type="com.fnfr.documents.PropertyBoolean">true</responseValue>
+                                        <variable type="com.fnfr.documents.PropertyBoolean">true</variable>
+                                        <secret type="com.fnfr.documents.PropertyBoolean">false</secret>
+                                    </ruleProperties>
+                                </processorInfo>
+                            </item>
+                        </analysisRules>
+                    </postProcessing>
+                    <applicationProperties type="com.fnfr.svt.documents.EmptyPropertyGroup"/>
+                </item>
+            </steps>
+            <arguments>
+                <item name="filter">
+                    <isMandatory>true</isMandatory>
+                </item>
+            </arguments>
+            <response>{&quot;status&quot;:&quot;NOK&quot;,&quot;count&quot;:&quot;0&quot;,&quot;message&quot;:&quot;null&quot;}</response>
+        </item>
+    </procedures>
+</testCase>
