@@ -2,6 +2,7 @@
 <testCase version="9.4.0.202309061644">
     <general>
         <language>Python</language>
+        <xPathVersion>XPATH31</xPathVersion>
     </general>
     <procedures>
         <item name="main">
@@ -1119,630 +1120,181 @@
                                     </nestedSteps>
                                     <applicationProperties type="com.fnfr.svt.documents.EmptyPropertyGroup"/>
                                 </item>
-                                <item guid="8ea5099d-0202-452e-abd7-6ca01e487ff8" action="comment" useFieldsInCommand="false">
+                            </nestedSteps>
+                            <applicationProperties type="com.fnfr.svt.documents.EmptyPropertyGroup"/>
+                        </item>
+                    </nestedSteps>
+                    <applicationProperties type="com.fnfr.svt.documents.EmptyPropertyGroup"/>
+                </item>
+                <item guid="9eacb10e-7e88-4de8-ac13-8d0a45e2fd07" action="comment" useFieldsInCommand="false">
+                    <command>
+                        <body>Get Results</body>
+                    </command>
+                    <nestedSteps>
+                        <item guid="74726def-6746-44d1-8c5c-711a82c16895" action="Custom" session="s1">
+                            <command>
+                                <body>-requestMethod GET -dataType json -rawResponse true -url [tas_api_url]/runningTests/[running_test_id]/measurements/favorites</body>
+                            </command>
+                            <postProcessing>
+                                <storeResponseAt>favorites_measurements</storeResponseAt>
+                                <storeResponseText>true</storeResponseText>
+                            </postProcessing>
+                            <applicationProperties type="com.fnfr.itest.platform2.shared.documents.ntaf.NtafTransferableDocumentObject" action="Custom" subharness="http://spirent.com/NTAF/harness/iTest/LandslideRest/Main" harness="http://spirent.com/NTAF/harness/iTest/LandslideRest/Main" harnessName="http://spirent.com/NTAF/harness/iTest/LandslideRest/Main" rawResponse="true" rawResponse.inherit="false" url="[tas_api_url]/runningTests/[running_test_id]/measurements/favorites" url.inherit="false"/>
+                        </item>
+                        <item guid="186cd4f1-d7c4-4865-ac74-cc3c2cf8187e" action="ShowResults" session="s1">
+                            <command>
+                                <body>-runningTestId [running_test_id]</body>
+                            </command>
+                            <postProcessing>
+                                <analysisRules>
+                                    <item>
+                                        <extractorInfo extractorType="query">
+                                            <extractorProperties type="com.fnfr.svt.mapping.execution.extractors.QueryDataExtractorPropertyGroup">
+                                                <query>resultFilesList0()</query>
+                                            </extractorProperties>
+                                        </extractorInfo>
+                                        <processorInfo ruleType="store">
+                                            <ruleProperties type="com.fnfr.svt.execution.builtin.processors.StoreProcessorPropertyGroup">
+                                                <storageLocation>csv_url</storageLocation>
+                                                <responseValue type="com.fnfr.documents.PropertyBoolean">false</responseValue>
+                                                <variable type="com.fnfr.documents.PropertyBoolean">true</variable>
+                                                <secret type="com.fnfr.documents.PropertyBoolean">false</secret>
+                                            </ruleProperties>
+                                        </processorInfo>
+                                    </item>
+                                </analysisRules>
+                            </postProcessing>
+                            <applicationProperties type="com.fnfr.itest.platform2.shared.documents.ntaf.NtafTransferableDocumentObject" action="ShowResults" subharness="http://spirent.com/NTAF/harness/iTest/LandslideRest/Main" harness="http://spirent.com/NTAF/harness/iTest/LandslideRest/Main" harnessName="http://spirent.com/NTAF/harness/iTest/LandslideRest/Main" runningTestId="[running_test_id]" runningTestId.inherit="false"/>
+                        </item>
+                        <item guid="89df8798-5d9a-48b9-8d95-bdf9fe279145" action="comment" useFieldsInCommand="false">
+                            <command>
+                                <body>replace ip in url w/ IP from params.</body>
+                            </command>
+                            <nestedSteps>
+                                <item guid="fcd948ae-6dca-4271-8218-342aed809c6c" action="eval" useFieldsInCommand="false">
                                     <command>
-                                        <body>Get Results</body>
+                                        <body>csv_url_list = csv_url.split(&apos;/&apos;)</body>
+                                    </command>
+                                    <applicationProperties type="com.fnfr.svt.documents.EmptyPropertyGroup"/>
+                                </item>
+                                <item guid="a93939c9-212d-4c56-82cb-1a56139b7b9f" action="eval" useFieldsInCommand="false">
+                                    <command>
+                                        <body>csv_url_list[2] = param(&apos;landslide/ls_Address&apos;)</body>
+                                    </command>
+                                    <applicationProperties type="com.fnfr.svt.documents.EmptyPropertyGroup"/>
+                                </item>
+                                <item guid="ea3983bc-085f-477b-8bff-875c0c7be4ab" action="eval" useFieldsInCommand="false">
+                                    <command>
+                                        <body>csv_url = &apos;/&apos;.join(csv_url_list)</body>
+                                    </command>
+                                    <applicationProperties type="com.fnfr.svt.documents.EmptyPropertyGroup"/>
+                                </item>
+                                <item guid="64980266-34e4-4406-9e45-54077b8c4254" action="eval" useFieldsInCommand="false">
+                                    <command>
+                                        <body>csv_url</body>
+                                    </command>
+                                    <applicationProperties type="com.fnfr.svt.documents.EmptyPropertyGroup"/>
+                                </item>
+                            </nestedSteps>
+                            <applicationProperties type="com.fnfr.svt.documents.EmptyPropertyGroup"/>
+                        </item>
+                        <item guid="35aca08e-e336-4fe3-8a14-24df08f2de9c" action="comment" useFieldsInCommand="false">
+                            <command>
+                                <body>download csv, convert to json and load it into dictionary</body>
+                            </command>
+                            <nestedSteps>
+                                <item guid="c79a0763-d9c1-4ca1-9395-7309a50d25dd" action="call" useFieldsInCommand="false">
+                                    <command>
+                                        <body>project://ai_Dish_Production/DISH_5G/Utilities/dish_tc_utilities.fftc#download_landslide_files_by_pattern_to_temp_dir(file_pattern=&apos;csv&apos;, results_url_list=[csv_url])</body>
+                                    </command>
+                                    <postProcessing>
+                                        <storeResponseAt>file_list</storeResponseAt>
+                                        <storeResponseText>true</storeResponseText>
+                                    </postProcessing>
+                                    <applicationProperties type="com.fnfr.svt.documents.EmptyPropertyGroup"/>
+                                </item>
+                                <item guid="20579359-0c5d-4b5b-9249-32ce05f7adf1" action="call" useFieldsInCommand="false">
+                                    <command>
+                                        <body>project://ai_Dish_Production/DISH_5G/Utilities/dish_tc_utilities.fftc#get_csv_tables_to_json(csv_file=file_list[0])</body>
+                                    </command>
+                                    <postProcessing>
+                                        <storeResponseAt>json_file</storeResponseAt>
+                                        <storeResponseText>true</storeResponseText>
+                                    </postProcessing>
+                                    <applicationProperties type="com.fnfr.svt.documents.EmptyPropertyGroup"/>
+                                </item>
+                                <item guid="61cfe28d-9725-406f-a3c1-d57940f174bc" action="readFile">
+                                    <command>
+                                        <body>file:/[json_file]</body>
+                                    </command>
+                                    <postProcessing>
+                                        <storeResponseAt>csv_json</storeResponseAt>
+                                        <storeResponseText>true</storeResponseText>
+                                    </postProcessing>
+                                    <applicationProperties type="com.fnfr.svt.execution.builtin.exec.ReadFilePropertyGroup"/>
+                                </item>
+                                <item guid="a9572ed3-dd00-449d-8765-32de225584d3" action="eval" useFieldsInCommand="false">
+                                    <command>
+                                        <body>results_dict = json.loads(csv_json)</body>
+                                    </command>
+                                    <applicationProperties type="com.fnfr.svt.documents.EmptyPropertyGroup"/>
+                                </item>
+                            </nestedSteps>
+                            <applicationProperties type="com.fnfr.svt.documents.EmptyPropertyGroup"/>
+                        </item>
+                        <item guid="0d5aaaf5-002b-4d19-ba0d-3ab1fc4c6f8a" action="comment" useFieldsInCommand="false">
+                            <command>
+                                <body>Get MM/SM reg counts from CSV </body>
+                            </command>
+                            <nestedSteps>
+                                <item guid="b6f7af7d-c1cd-4219-8f0c-3f3bacc97d6b" action="call" useFieldsInCommand="false">
+                                    <command>
+                                        <body>project://ai_Dish_Production/DISH_5G/test_cases_scale/procedures/scale_procedures.fftc#getLastValuesCsvDict(input_results_dict=results_dict, group=&apos;MM&apos;, item_list=[&apos;Registration Completes&apos;,&apos;Registration Rejects&apos;])</body>
+                                    </command>
+                                    <postProcessing>
+                                        <storeResponseAt>mm_dict</storeResponseAt>
+                                        <storeResponseText>true</storeResponseText>
+                                    </postProcessing>
+                                    <applicationProperties type="com.fnfr.svt.documents.EmptyPropertyGroup"/>
+                                </item>
+                                <item guid="b2011314-8b31-4b92-981f-3b331f0ada23" action="call" useFieldsInCommand="false">
+                                    <command>
+                                        <body>project://ai_Dish_Production/DISH_5G/test_cases_scale/procedures/scale_procedures.fftc#getLastValuesCsvDict(input_results_dict=results_dict, group=&apos;SM&apos;, item_list=[&apos;Pdu Establishment Accepts&apos;,&apos;Pdu Establishment Rejects&apos;])</body>
+                                    </command>
+                                    <postProcessing>
+                                        <storeResponseAt>sm_dict</storeResponseAt>
+                                        <storeResponseText>true</storeResponseText>
+                                    </postProcessing>
+                                    <applicationProperties type="com.fnfr.svt.documents.EmptyPropertyGroup"/>
+                                </item>
+                                <item guid="22fd35e3-92e2-4853-8900-7d95812a942f" action="comment" useFieldsInCommand="false">
+                                    <command>
+                                        <body>convert floats to int</body>
                                     </command>
                                     <nestedSteps>
-                                        <item guid="ce9ba1fe-eb30-4d6d-a4c5-fb8c65a9e63a" action="Custom" session="s1">
+                                        <item guid="843bf613-8707-4f62-ad5a-c6e506fb785c" action="for" useFieldsInCommand="false">
                                             <command>
-                                                <body>-requestMethod GET -dataType json -rawResponse true -url [tas_api_url]/runningTests/[running_test_id]/measurements/favorites</body>
-                                            </command>
-                                            <postProcessing>
-                                                <storeResponseAt>favorites_measurements</storeResponseAt>
-                                                <storeResponseText>true</storeResponseText>
-                                            </postProcessing>
-                                            <applicationProperties type="com.fnfr.itest.platform2.shared.documents.ntaf.NtafTransferableDocumentObject" action="Custom" subharness="http://spirent.com/NTAF/harness/iTest/LandslideRest/Main" harness="http://spirent.com/NTAF/harness/iTest/LandslideRest/Main" harnessName="http://spirent.com/NTAF/harness/iTest/LandslideRest/Main" rawResponse="true" rawResponse.inherit="false" url="[tas_api_url]/runningTests/[running_test_id]/measurements/favorites" url.inherit="false"/>
-                                        </item>
-                                        <item guid="aac9ff86-0de1-4b61-8eae-10a3b0cae61b" action="ShowResults" session="s1">
-                                            <command>
-                                                <body>-runningTestId [running_test_id]</body>
-                                            </command>
-                                            <postProcessing>
-                                                <analysisRules>
-                                                    <item>
-                                                        <extractorInfo extractorType="query">
-                                                            <extractorProperties type="com.fnfr.svt.mapping.execution.extractors.QueryDataExtractorPropertyGroup">
-                                                                <query>resultFilesList0()</query>
-                                                            </extractorProperties>
-                                                        </extractorInfo>
-                                                        <processorInfo ruleType="store">
-                                                            <ruleProperties type="com.fnfr.svt.execution.builtin.processors.StoreProcessorPropertyGroup">
-                                                                <storageLocation>csv_url</storageLocation>
-                                                                <responseValue type="com.fnfr.documents.PropertyBoolean">false</responseValue>
-                                                                <variable type="com.fnfr.documents.PropertyBoolean">true</variable>
-                                                                <secret type="com.fnfr.documents.PropertyBoolean">false</secret>
-                                                            </ruleProperties>
-                                                        </processorInfo>
-                                                    </item>
-                                                </analysisRules>
-                                            </postProcessing>
-                                            <applicationProperties type="com.fnfr.itest.platform2.shared.documents.ntaf.NtafTransferableDocumentObject" action="ShowResults" subharness="http://spirent.com/NTAF/harness/iTest/LandslideRest/Main" harness="http://spirent.com/NTAF/harness/iTest/LandslideRest/Main" harnessName="http://spirent.com/NTAF/harness/iTest/LandslideRest/Main" runningTestId="[running_test_id]" runningTestId.inherit="false"/>
-                                        </item>
-                                        <item guid="0a77bbd4-78a0-46e5-bed4-3318f0931f52" action="comment" useFieldsInCommand="false">
-                                            <command>
-                                                <body>replace ip in url w/ IP from params.</body>
+                                                <body>item in [&apos;Registration Completes&apos;,&apos;Registration Rejects&apos;]:</body>
                                             </command>
                                             <nestedSteps>
-                                                <item guid="d3325e25-13b1-4985-8b48-b626ed6e772e" action="eval" useFieldsInCommand="false">
+                                                <item guid="6db43e41-9a76-40e2-81be-17b6c335228d" action="eval" useFieldsInCommand="false">
                                                     <command>
-                                                        <body>csv_url_list = csv_url.split(&apos;/&apos;)</body>
-                                                    </command>
-                                                    <applicationProperties type="com.fnfr.svt.documents.EmptyPropertyGroup"/>
-                                                </item>
-                                                <item guid="10903222-ad24-4098-a353-8b9c9461ffc9" action="eval" useFieldsInCommand="false">
-                                                    <command>
-                                                        <body>csv_url_list[2] = param(&apos;landslide/ls_Address&apos;)</body>
-                                                    </command>
-                                                    <applicationProperties type="com.fnfr.svt.documents.EmptyPropertyGroup"/>
-                                                </item>
-                                                <item guid="1172380c-b832-4ee3-b5d2-11df21288602" action="eval" useFieldsInCommand="false">
-                                                    <command>
-                                                        <body>csv_url = &apos;/&apos;.join(csv_url_list)</body>
-                                                    </command>
-                                                    <applicationProperties type="com.fnfr.svt.documents.EmptyPropertyGroup"/>
-                                                </item>
-                                                <item guid="e6ee9aa2-9c2a-489b-98c4-3877e5e7bb91" action="eval" useFieldsInCommand="false">
-                                                    <command>
-                                                        <body>csv_url</body>
+                                                        <body>mm_dict[item] = int(float(mm_dict[item]))</body>
                                                     </command>
                                                     <applicationProperties type="com.fnfr.svt.documents.EmptyPropertyGroup"/>
                                                 </item>
                                             </nestedSteps>
                                             <applicationProperties type="com.fnfr.svt.documents.EmptyPropertyGroup"/>
                                         </item>
-                                        <item guid="53f5d0b7-acfe-4095-beaa-27a02be25829" action="comment" useFieldsInCommand="false">
+                                        <item guid="69ce697d-25c2-4a31-8858-6aa1c152200f" action="for" useFieldsInCommand="false">
                                             <command>
-                                                <body>download csv, convert to json and load it into dictionary</body>
+                                                <body>item in [&apos;Pdu Establishment Accepts&apos;,&apos;Pdu Establishment Rejects&apos;]:</body>
                                             </command>
                                             <nestedSteps>
-                                                <item guid="d37fb968-689b-49ab-9067-387e194c8bbf" action="call" useFieldsInCommand="false">
+                                                <item guid="43e7bb1e-ed67-4f3b-be6e-935252a70c3b" action="eval" useFieldsInCommand="false">
                                                     <command>
-                                                        <body>project://ai_Dish_Production/DISH_5G/Utilities/dish_tc_utilities.fftc#download_landslide_files_by_pattern_to_temp_dir(file_pattern=&apos;csv&apos;, results_url_list=[csv_url])</body>
+                                                        <body>sm_dict[item] = int(float(sm_dict[item]))</body>
                                                     </command>
-                                                    <postProcessing>
-                                                        <storeResponseAt>file_list</storeResponseAt>
-                                                        <storeResponseText>true</storeResponseText>
-                                                    </postProcessing>
-                                                    <applicationProperties type="com.fnfr.svt.documents.EmptyPropertyGroup"/>
-                                                </item>
-                                                <item guid="9733b1e2-f57e-4574-b124-e58bbdd5e26d" action="call" useFieldsInCommand="false">
-                                                    <command>
-                                                        <body>project://ai_Dish_Production/DISH_5G/Utilities/dish_tc_utilities.fftc#get_csv_tables_to_json(csv_file=file_list[0])</body>
-                                                    </command>
-                                                    <postProcessing>
-                                                        <storeResponseAt>json_file</storeResponseAt>
-                                                        <storeResponseText>true</storeResponseText>
-                                                    </postProcessing>
-                                                    <applicationProperties type="com.fnfr.svt.documents.EmptyPropertyGroup"/>
-                                                </item>
-                                                <item guid="09438976-41b4-4841-b91c-fd8184fe56cb" action="readFile">
-                                                    <command>
-                                                        <body>file:/[json_file]</body>
-                                                    </command>
-                                                    <postProcessing>
-                                                        <storeResponseAt>csv_json</storeResponseAt>
-                                                        <storeResponseText>true</storeResponseText>
-                                                    </postProcessing>
-                                                    <applicationProperties type="com.fnfr.svt.execution.builtin.exec.ReadFilePropertyGroup"/>
-                                                </item>
-                                                <item guid="0bcba8c4-9274-435f-b80b-1abc3fe74697" action="eval" useFieldsInCommand="false">
-                                                    <command>
-                                                        <body>results_dict = json.loads(csv_json)</body>
-                                                    </command>
-                                                    <applicationProperties type="com.fnfr.svt.documents.EmptyPropertyGroup"/>
-                                                </item>
-                                            </nestedSteps>
-                                            <applicationProperties type="com.fnfr.svt.documents.EmptyPropertyGroup"/>
-                                        </item>
-                                        <item guid="55280d18-36d3-4cbf-a4d6-849e991a7202" action="comment" useFieldsInCommand="false">
-                                            <command>
-                                                <body>Get MM/SM reg counts from CSV </body>
-                                            </command>
-                                            <nestedSteps>
-                                                <item guid="f4873d0e-0623-4bc0-865c-12ad8283d3ad" action="call" useFieldsInCommand="false">
-                                                    <command>
-                                                        <body>project://ai_Dish_Production/DISH_5G/test_cases_scale/procedures/scale_procedures.fftc#getLastValuesCsvDict(input_results_dict=results_dict, group=&apos;MM&apos;, item_list=[&apos;Registration Completes&apos;,&apos;Registration Rejects&apos;])</body>
-                                                    </command>
-                                                    <postProcessing>
-                                                        <storeResponseAt>mm_dict</storeResponseAt>
-                                                        <storeResponseText>true</storeResponseText>
-                                                    </postProcessing>
-                                                    <applicationProperties type="com.fnfr.svt.documents.EmptyPropertyGroup"/>
-                                                </item>
-                                                <item guid="4b5a4840-88dd-4c88-a198-e2e03583926c" action="call" useFieldsInCommand="false">
-                                                    <command>
-                                                        <body>project://ai_Dish_Production/DISH_5G/test_cases_scale/procedures/scale_procedures.fftc#getLastValuesCsvDict(input_results_dict=results_dict, group=&apos;SM&apos;, item_list=[&apos;Pdu Establishment Accepts&apos;,&apos;Pdu Establishment Rejects&apos;])</body>
-                                                    </command>
-                                                    <postProcessing>
-                                                        <storeResponseAt>sm_dict</storeResponseAt>
-                                                        <storeResponseText>true</storeResponseText>
-                                                    </postProcessing>
-                                                    <applicationProperties type="com.fnfr.svt.documents.EmptyPropertyGroup"/>
-                                                </item>
-                                                <item guid="06e957a6-c497-4106-a15f-561875578599" action="comment" useFieldsInCommand="false">
-                                                    <command>
-                                                        <body>convert floats to int</body>
-                                                    </command>
-                                                    <nestedSteps>
-                                                        <item guid="a2238376-4a1f-4216-910e-1c186de984b7" action="for" useFieldsInCommand="false">
-                                                            <command>
-                                                                <body>item in [&apos;Registration Completes&apos;,&apos;Registration Rejects&apos;]:</body>
-                                                            </command>
-                                                            <nestedSteps>
-                                                                <item guid="6f8576a1-f19c-4eba-8f21-211d0efe91b9" action="eval" useFieldsInCommand="false">
-                                                                    <command>
-                                                                        <body>mm_dict[item] = int(float(mm_dict[item]))</body>
-                                                                    </command>
-                                                                    <applicationProperties type="com.fnfr.svt.documents.EmptyPropertyGroup"/>
-                                                                </item>
-                                                            </nestedSteps>
-                                                            <applicationProperties type="com.fnfr.svt.documents.EmptyPropertyGroup"/>
-                                                        </item>
-                                                        <item guid="dd0780ae-0359-4c10-b2cd-e1775e4416ba" action="for" useFieldsInCommand="false">
-                                                            <command>
-                                                                <body>item in [&apos;Pdu Establishment Accepts&apos;,&apos;Pdu Establishment Rejects&apos;]:</body>
-                                                            </command>
-                                                            <nestedSteps>
-                                                                <item guid="4a238e5f-423e-4df3-9224-eb09930c1fbc" action="eval" useFieldsInCommand="false">
-                                                                    <command>
-                                                                        <body>sm_dict[item] = int(float(sm_dict[item]))</body>
-                                                                    </command>
-                                                                    <applicationProperties type="com.fnfr.svt.documents.EmptyPropertyGroup"/>
-                                                                </item>
-                                                            </nestedSteps>
-                                                            <applicationProperties type="com.fnfr.svt.documents.EmptyPropertyGroup"/>
-                                                        </item>
-                                                    </nestedSteps>
-                                                    <applicationProperties type="com.fnfr.svt.documents.EmptyPropertyGroup"/>
-                                                </item>
-                                                <item guid="e7f87de8-e67e-42b8-a59a-8be4188769fc" action="eval" useFieldsInCommand="false">
-                                                    <command>
-                                                        <body>json.dumps(mm_dict)</body>
-                                                    </command>
-                                                    <applicationProperties type="com.fnfr.svt.documents.EmptyPropertyGroup"/>
-                                                </item>
-                                                <item guid="14cd0bc5-fc82-4598-8a71-2ba9e1d4b7b3" action="eval" useFieldsInCommand="false">
-                                                    <command>
-                                                        <body>json.dumps(sm_dict)</body>
-                                                    </command>
-                                                    <applicationProperties type="com.fnfr.svt.documents.EmptyPropertyGroup"/>
-                                                </item>
-                                            </nestedSteps>
-                                            <applicationProperties type="com.fnfr.svt.documents.EmptyPropertyGroup"/>
-                                        </item>
-                                        <item guid="8535ae71-353d-43d8-8f0b-f13a6a9ffb09" action="comment" useFieldsInCommand="false">
-                                            <command>
-                                                <body>Get SIP reg counts from CSV </body>
-                                            </command>
-                                            <nestedSteps>
-                                                <item guid="584eca54-dd82-4c3f-9ed4-5ae8de80ffec" action="call" useFieldsInCommand="false">
-                                                    <command>
-                                                        <body>project://ai_Dish_Production/DISH_5G/test_cases_scale/procedures/scale_procedures.fftc#getLastValuesCsvDict(input_results_dict=results_dict, group=&apos;Gm|Main&apos;, item_list=[&apos;SIP Registration Setup Count&apos;,&apos;SIP Registration Failures&apos;,&apos;SIP Registration Retries&apos;,&apos;SIP Call Successes&apos;,&apos;SIP Call Failures&apos;,&apos;SIP Average Call Setup (micro-sec)&apos;,&apos;SIP Minimum Call Setup (micro-sec)&apos;,&apos;SIP Maximum Call Setup (micro-sec)&apos;])</body>
-                                                    </command>
-                                                    <postProcessing>
-                                                        <storeResponseAt>gm_dict</storeResponseAt>
-                                                        <storeResponseText>true</storeResponseText>
-                                                    </postProcessing>
-                                                    <applicationProperties type="com.fnfr.svt.documents.EmptyPropertyGroup"/>
-                                                </item>
-                                                <item guid="b600da3f-ef8d-4cc8-ac5a-84f90f1ca970" action="comment" useFieldsInCommand="false">
-                                                    <command>
-                                                        <body>convert floats to int</body>
-                                                    </command>
-                                                    <nestedSteps>
-                                                        <item guid="eec0dbe9-71bf-4ffb-9ff4-1a1c984b2398" action="for" useFieldsInCommand="false">
-                                                            <command>
-                                                                <body>item in [&apos;SIP Registration Setup Count&apos;,&apos;SIP Registration Failures&apos;,&apos;SIP Registration Retries&apos;,&apos;SIP Call Successes&apos;,&apos;SIP Call Failures&apos;,&apos;SIP Average Call Setup (micro-sec)&apos;,&apos;SIP Minimum Call Setup (micro-sec)&apos;,&apos;SIP Maximum Call Setup (micro-sec)&apos;]:</body>
-                                                            </command>
-                                                            <nestedSteps>
-                                                                <item guid="18789a9e-0d38-4b5f-80a4-2bed3bf7b131" action="eval" useFieldsInCommand="false">
-                                                                    <command>
-                                                                        <body>gm_dict[item] = int(float(gm_dict[item]))</body>
-                                                                    </command>
-                                                                    <applicationProperties type="com.fnfr.svt.documents.EmptyPropertyGroup"/>
-                                                                </item>
-                                                            </nestedSteps>
-                                                            <applicationProperties type="com.fnfr.svt.documents.EmptyPropertyGroup"/>
-                                                        </item>
-                                                    </nestedSteps>
-                                                    <applicationProperties type="com.fnfr.svt.documents.EmptyPropertyGroup"/>
-                                                </item>
-                                                <item guid="11661aba-6514-4fb4-b774-b4c49b99b7b1" action="eval" useFieldsInCommand="false">
-                                                    <command>
-                                                        <body>json.dumps(gm_dict)</body>
-                                                    </command>
-                                                    <applicationProperties type="com.fnfr.svt.documents.EmptyPropertyGroup"/>
-                                                </item>
-                                            </nestedSteps>
-                                            <applicationProperties type="com.fnfr.svt.documents.EmptyPropertyGroup"/>
-                                        </item>
-                                        <item guid="48a0bdde-d47b-4011-9135-29eb3e974bb0" action="comment" useFieldsInCommand="false">
-                                            <command>
-                                                <body>For SIP reg count grab the count from the middle of the test because something FUNKY is happening with this count at the end of test</body>
-                                            </command>
-                                            <nestedSteps>
-                                                <item guid="d4db38b2-9e93-4781-9706-d32a4617e8a3" action="comment" useFieldsInCommand="false">
-                                                    <command>
-                                                        <body>get middle number</body>
-                                                    </command>
-                                                    <nestedSteps>
-                                                        <item guid="9e2f2e1e-2c60-4835-8710-4de3a5942440" action="eval" useFieldsInCommand="false">
-                                                            <command>
-                                                                <body>[*results_dict[&apos;Gm|Main&apos;]]</body>
-                                                            </command>
-                                                            <applicationProperties type="com.fnfr.svt.documents.EmptyPropertyGroup"/>
-                                                        </item>
-                                                        <item guid="703ec59b-4a89-4bdb-9912-2f47cba39390" action="eval" useFieldsInCommand="false">
-                                                            <command>
-                                                                <body>middle_num = int(int([*results_dict[&apos;Gm|Main&apos;]][-2])/2)</body>
-                                                            </command>
-                                                            <applicationProperties type="com.fnfr.svt.documents.EmptyPropertyGroup"/>
-                                                        </item>
-                                                        <item guid="e1697eea-58d2-48fd-a5b2-138d96c750c5" action="eval" useFieldsInCommand="false">
-                                                            <command>
-                                                                <body>middle_num</body>
-                                                            </command>
-                                                            <applicationProperties type="com.fnfr.svt.documents.EmptyPropertyGroup"/>
-                                                        </item>
-                                                    </nestedSteps>
-                                                    <applicationProperties type="com.fnfr.svt.documents.EmptyPropertyGroup"/>
-                                                </item>
-                                                <item guid="2a65a58b-5b12-4122-9434-917cd80d6e09" action="comment" useFieldsInCommand="false">
-                                                    <command>
-                                                        <body>overwrite gm SIP Reg count from end w/ count from middle</body>
-                                                    </command>
-                                                    <nestedSteps>
-                                                        <item guid="9f864674-b3c3-4733-b800-cbf6912ec976" action="eval" useFieldsInCommand="false">
-                                                            <command>
-                                                                <body>indx = int([i for i, s in enumerate(results_dict[&apos;Gm|Main&apos;][&apos;headers&apos;]) if &apos;SIP Registration Setup Count&apos; in s][0])</body>
-                                                            </command>
-                                                            <applicationProperties type="com.fnfr.svt.documents.EmptyPropertyGroup"/>
-                                                        </item>
-                                                        <item guid="91f4716c-9486-4b85-a3cf-f1507f080223" action="eval" useFieldsInCommand="false">
-                                                            <command>
-                                                                <body>gm_dict[&apos;SIP Registration Setup Count&apos;] = int(float(results_dict[&apos;Gm|Main&apos;][str(middle_num)][indx]))</body>
-                                                            </command>
-                                                            <applicationProperties type="com.fnfr.svt.documents.EmptyPropertyGroup"/>
-                                                        </item>
-                                                    </nestedSteps>
-                                                    <applicationProperties type="com.fnfr.svt.documents.EmptyPropertyGroup"/>
-                                                </item>
-                                            </nestedSteps>
-                                            <applicationProperties type="com.fnfr.svt.documents.EmptyPropertyGroup"/>
-                                        </item>
-                                        <item guid="d653e5b3-9bc4-428c-8864-05bdf7ce5163" action="comment" useFieldsInCommand="false">
-                                            <command>
-                                                <body>Report results</body>
-                                            </command>
-                                            <nestedSteps>
-                                                <item guid="9223a1bb-d512-446d-8285-29d05eb5dc7b" action="comment" useFieldsInCommand="false">
-                                                    <command>
-                                                        <body>Output text</body>
-                                                    </command>
-                                                    <nestedSteps>
-                                                        <item guid="5bc4cc24-dbd4-4287-b6ff-36552a9a620f" action="eval" useFieldsInCommand="false">
-                                                            <command>
-                                                                <body>total_calls= gm_dict[&apos;SIP Call Successes&apos;]+gm_dict[&apos;SIP Call Failures&apos;]</body>
-                                                            </command>
-                                                            <applicationProperties type="com.fnfr.svt.documents.EmptyPropertyGroup"/>
-                                                        </item>
-                                                        <item guid="7f95a576-b8d8-44d1-a36a-d750f4b5e547" action="if" useFieldsInCommand="false">
-                                                            <command>
-                                                                <body>total_calls == 0:</body>
-                                                            </command>
-                                                            <nestedSteps>
-                                                                <item guid="86dd913f-a109-42ca-8e3a-8b93f798bb8b" action="eval" useFieldsInCommand="false">
-                                                                    <command>
-                                                                        <body>pct_good = 0</body>
-                                                                    </command>
-                                                                    <applicationProperties type="com.fnfr.svt.documents.EmptyPropertyGroup"/>
-                                                                </item>
-                                                                <item guid="77deaebf-dd9a-465f-9111-f12b9e719c9b" action="message" useFieldsInCommand="false">
-                                                                    <command>
-                                                                        <body>Error:-Registration Failure</body>
-                                                                    </command>
-                                                                    <applicationProperties type="com.fnfr.svt.execution.builtin.exec.MessagePropertyGroup">
-                                                                        <severity inherit="false">Error</severity>
-                                                                        <message inherit="false">-Registration Failure</message>
-                                                                    </applicationProperties>
-                                                                </item>
-                                                            </nestedSteps>
-                                                            <applicationProperties type="com.fnfr.svt.documents.EmptyPropertyGroup"/>
-                                                        </item>
-                                                        <item guid="d4b15284-c05d-4df0-a1a8-52ca0ac9402a" action="else" useFieldsInCommand="false">
-                                                            <nestedSteps>
-                                                                <item guid="38615648-5de2-4ecb-9953-c6a92df2d64b" action="eval" useFieldsInCommand="false">
-                                                                    <command>
-                                                                        <body>pct_good=100*(gm_dict[&apos;SIP Call Successes&apos;]/total_calls)</body>
-                                                                    </command>
-                                                                    <applicationProperties type="com.fnfr.svt.documents.EmptyPropertyGroup"/>
-                                                                </item>
-                                                            </nestedSteps>
-                                                            <applicationProperties type="com.fnfr.svt.documents.EmptyPropertyGroup"/>
-                                                        </item>
-                                                        <item guid="f661ccc4-c4b7-4738-8839-5cfc85b5f860" action="eval" useFieldsInCommand="false">
-                                                            <command>
-                                                                <body>total_reg = gm_dict[&apos;SIP Registration Setup Count&apos;]+gm_dict[&apos;SIP Registration Failures&apos;]</body>
-                                                            </command>
-                                                            <applicationProperties type="com.fnfr.svt.documents.EmptyPropertyGroup"/>
-                                                        </item>
-                                                        <item guid="70725c84-9d06-40a1-b49f-7844ca123037" action="eval" useFieldsInCommand="false">
-                                                            <command>
-                                                                <body>setup_avg = int(gm_dict[&quot;SIP Average Call Setup (micro-sec)&quot;]/1000)</body>
-                                                            </command>
-                                                            <applicationProperties type="com.fnfr.svt.documents.EmptyPropertyGroup"/>
-                                                        </item>
-                                                        <item guid="40510f52-ea94-4656-8e0d-1640e9d67c55" action="eval" useFieldsInCommand="false">
-                                                            <command>
-                                                                <body>setup_min = int(gm_dict[&quot;SIP Minimum Call Setup (micro-sec)&quot;]/1000)</body>
-                                                            </command>
-                                                            <applicationProperties type="com.fnfr.svt.documents.EmptyPropertyGroup"/>
-                                                        </item>
-                                                        <item guid="b6552d52-708c-4ee1-b7f6-9349c3eb21b6" action="eval" useFieldsInCommand="false">
-                                                            <command>
-                                                                <body>setup_max = int(gm_dict[&quot;SIP Maximum Call Setup (micro-sec)&quot;]/1000)</body>
-                                                            </command>
-                                                            <applicationProperties type="com.fnfr.svt.documents.EmptyPropertyGroup"/>
-                                                        </item>
-                                                        <item guid="c977e99c-9768-43da-9f7b-f609ceda897f" action="message" useFieldsInCommand="false">
-                                                            <command>
-                                                                <body>Information:--Subscribers = [sub_count_total]</body>
-                                                            </command>
-                                                            <applicationProperties type="com.fnfr.svt.execution.builtin.exec.MessagePropertyGroup">
-                                                                <severity inherit="false" defaultValue=""/>
-                                                                <message inherit="false">--Subscribers = [sub_count_total]</message>
-                                                            </applicationProperties>
-                                                        </item>
-                                                        <item guid="a5637171-4c8c-4295-9b1d-beed9795e395" action="message" useFieldsInCommand="false">
-                                                            <command>
-                                                                <body>Information:--5G Registrations Success = [mm_dict[&apos;Registration Completes&apos;]]</body>
-                                                            </command>
-                                                            <applicationProperties type="com.fnfr.svt.execution.builtin.exec.MessagePropertyGroup">
-                                                                <severity inherit="false" defaultValue=""/>
-                                                                <message inherit="false">--5G Registrations Success = [mm_dict[&apos;Registration Completes&apos;]]</message>
-                                                            </applicationProperties>
-                                                        </item>
-                                                        <item guid="8a0bec1b-af7b-4366-b37d-437bb2bd4774" action="message" useFieldsInCommand="false">
-                                                            <command>
-                                                                <body>Information:--PDU Registrations Success = [sm_dict[&apos;Pdu Establishment Accepts&apos;]]</body>
-                                                            </command>
-                                                            <applicationProperties type="com.fnfr.svt.execution.builtin.exec.MessagePropertyGroup">
-                                                                <severity inherit="false" defaultValue=""/>
-                                                                <message inherit="false">--PDU Registrations Success = [sm_dict[&apos;Pdu Establishment Accepts&apos;]]</message>
-                                                            </applicationProperties>
-                                                        </item>
-                                                        <item guid="535afc5e-b02f-41a8-9acd-1a4de613b9ad" action="message" useFieldsInCommand="false">
-                                                            <command>
-                                                                <body>Information:--SIP Registrations Success = [gm_dict[&apos;SIP Registration Setup Count&apos;]]</body>
-                                                            </command>
-                                                            <applicationProperties type="com.fnfr.svt.execution.builtin.exec.MessagePropertyGroup">
-                                                                <severity inherit="false" defaultValue=""/>
-                                                                <message inherit="false">--SIP Registrations Success = [gm_dict[&apos;SIP Registration Setup Count&apos;]]</message>
-                                                            </applicationProperties>
-                                                        </item>
-                                                        <item guid="74b769d8-c41f-4502-8c11-790d2c620e8e" action="message" useFieldsInCommand="false">
-                                                            <command>
-                                                                <body>Information:--SIP Registration failures = [gm_dict[&apos;SIP Registration Failures&apos;]]</body>
-                                                            </command>
-                                                            <applicationProperties type="com.fnfr.svt.execution.builtin.exec.MessagePropertyGroup">
-                                                                <severity inherit="false" defaultValue=""/>
-                                                                <message inherit="false">--SIP Registration failures = [gm_dict[&apos;SIP Registration Failures&apos;]]</message>
-                                                            </applicationProperties>
-                                                        </item>
-                                                        <item guid="b728b882-aeec-4d77-8c79-03d3917b2af1" action="message" useFieldsInCommand="false">
-                                                            <command>
-                                                                <body>Information:--SIP Calls Attempted = [total_calls]</body>
-                                                            </command>
-                                                            <applicationProperties type="com.fnfr.svt.execution.builtin.exec.MessagePropertyGroup">
-                                                                <message inherit="false">--SIP Calls Attempted = [total_calls]</message>
-                                                            </applicationProperties>
-                                                        </item>
-                                                        <item guid="57278c96-52a3-4fef-992b-8343c6441cb9" action="message" useFieldsInCommand="false">
-                                                            <command>
-                                                                <body>Information:--SIP Call Success = [gm_dict[&apos;SIP Call Successes&apos;]]</body>
-                                                            </command>
-                                                            <applicationProperties type="com.fnfr.svt.execution.builtin.exec.MessagePropertyGroup">
-                                                                <message inherit="false">--SIP Call Success = [gm_dict[&apos;SIP Call Successes&apos;]]</message>
-                                                            </applicationProperties>
-                                                        </item>
-                                                        <item guid="2ddcea9f-7085-448a-a977-753e58a0bdcc" action="message" useFieldsInCommand="false">
-                                                            <command>
-                                                                <body>Information:--SIP Call Failure = [gm_dict[&apos;SIP Call Failures&apos;]]</body>
-                                                            </command>
-                                                            <applicationProperties type="com.fnfr.svt.execution.builtin.exec.MessagePropertyGroup">
-                                                                <message inherit="false">--SIP Call Failure = [gm_dict[&apos;SIP Call Failures&apos;]]</message>
-                                                            </applicationProperties>
-                                                        </item>
-                                                        <item guid="208c523d-5ac9-43e4-9b90-572383d6a8ca" action="message" useFieldsInCommand="false">
-                                                            <command>
-                                                                <body>Information:--Call Sucess = [pct_good]%</body>
-                                                            </command>
-                                                            <applicationProperties type="com.fnfr.svt.execution.builtin.exec.MessagePropertyGroup">
-                                                                <message inherit="false">--Call Sucess = [pct_good]%</message>
-                                                            </applicationProperties>
-                                                        </item>
-                                                        <item guid="153492ed-463f-4dad-86c5-4a40e1441b68" action="message" useFieldsInCommand="false">
-                                                            <command>
-                                                                <body>Information:--SIP Average Call Setup = [setup_avg] ms</body>
-                                                            </command>
-                                                            <applicationProperties type="com.fnfr.svt.execution.builtin.exec.MessagePropertyGroup">
-                                                                <message inherit="false">--SIP Average Call Setup = [setup_avg] ms</message>
-                                                            </applicationProperties>
-                                                        </item>
-                                                        <item guid="a241a0d0-b7d8-4b4f-961d-3165fbf6343b" action="message" useFieldsInCommand="false">
-                                                            <command>
-                                                                <body>Information:--SIP Minimum Call Setup = [setup_min] ms</body>
-                                                            </command>
-                                                            <applicationProperties type="com.fnfr.svt.execution.builtin.exec.MessagePropertyGroup">
-                                                                <message inherit="false">--SIP Minimum Call Setup = [setup_min] ms</message>
-                                                            </applicationProperties>
-                                                        </item>
-                                                        <item guid="d1a661ed-a0ed-408e-ae34-372c1ea76165" action="message" useFieldsInCommand="false">
-                                                            <command>
-                                                                <body>Information:--SIP Maximum Call Setup = [setup_max] ms</body>
-                                                            </command>
-                                                            <applicationProperties type="com.fnfr.svt.execution.builtin.exec.MessagePropertyGroup">
-                                                                <message inherit="false">--SIP Maximum Call Setup = [setup_max] ms</message>
-                                                            </applicationProperties>
-                                                        </item>
-                                                    </nestedSteps>
-                                                    <applicationProperties type="com.fnfr.svt.documents.EmptyPropertyGroup"/>
-                                                </item>
-                                                <item guid="7e66f4cc-edc1-41f2-8eac-ad0e1c6993c3" action="comment" useFieldsInCommand="false">
-                                                    <command>
-                                                        <body>Graph percentage</body>
-                                                    </command>
-                                                    <nestedSteps>
-                                                        <item guid="3dded51e-6c3b-466d-89e9-e26c7df94ceb" action="eval" useFieldsInCommand="false">
-                                                            <command>
-                                                                <body>float(&apos;%0.2f&apos; % pct_good)</body>
-                                                            </command>
-                                                            <postProcessing>
-                                                                <analysisRules>
-                                                                    <item>
-                                                                        <extractorInfo extractorType="query">
-                                                                            <extractorProperties type="com.fnfr.svt.mapping.execution.extractors.QueryDataExtractorPropertyGroup">
-                                                                                <query>responseLine()</query>
-                                                                            </extractorProperties>
-                                                                        </extractorInfo>
-                                                                        <processorInfo ruleType="chart_as_bar">
-                                                                            <ruleProperties type="com.fnfr.svt.execution.charting.processors.ChartUsingBarPropertyGroup" chartName="Pct_Success" useLegend="false" xAxisLabel="SIP Call Rate (calls/sec)" yAxisLabel="Success Percentage" category="[rate]" series="[rate]" rotate="false">
-                                                                                <title>Call Success (call time [param(&apos;CallLength&apos;)] sec)</title>
-                                                                                <expression>value</expression>
-                                                                            </ruleProperties>
-                                                                        </processorInfo>
-                                                                    </item>
-                                                                </analysisRules>
-                                                            </postProcessing>
-                                                            <applicationProperties type="com.fnfr.svt.documents.EmptyPropertyGroup"/>
-                                                        </item>
-                                                    </nestedSteps>
-                                                    <applicationProperties type="com.fnfr.svt.documents.EmptyPropertyGroup"/>
-                                                </item>
-                                                <item guid="db7c00ba-7176-4eb6-851b-402a9a3d366b" action="comment" useFieldsInCommand="false">
-                                                    <command>
-                                                        <body>Graph volume</body>
-                                                    </command>
-                                                    <nestedSteps>
-                                                        <item guid="fbf5dc6b-a8da-4b22-a2bf-cff063fed028" action="eval" useFieldsInCommand="false">
-                                                            <command>
-                                                                <body>total_calls</body>
-                                                            </command>
-                                                            <postProcessing>
-                                                                <analysisRules>
-                                                                    <item>
-                                                                        <extractorInfo extractorType="query">
-                                                                            <extractorProperties type="com.fnfr.svt.mapping.execution.extractors.QueryDataExtractorPropertyGroup">
-                                                                                <query>responseLine()</query>
-                                                                            </extractorProperties>
-                                                                        </extractorInfo>
-                                                                        <processorInfo ruleType="chart_as_bar">
-                                                                            <ruleProperties type="com.fnfr.svt.execution.charting.processors.ChartUsingBarPropertyGroup" chartName="Call_Vol" useLegend="false" xAxisLabel="SIP Call Rate (calls/sec)" yAxisLabel="Total Calls" category="[rate]" series="[rate]" rotate="false">
-                                                                                <title>Call Volume (call time [param(&apos;CallLength&apos;)] sec)</title>
-                                                                                <expression>value</expression>
-                                                                            </ruleProperties>
-                                                                        </processorInfo>
-                                                                    </item>
-                                                                </analysisRules>
-                                                            </postProcessing>
-                                                            <applicationProperties type="com.fnfr.svt.documents.EmptyPropertyGroup"/>
-                                                        </item>
-                                                    </nestedSteps>
-                                                    <applicationProperties type="com.fnfr.svt.documents.EmptyPropertyGroup"/>
-                                                </item>
-                                                <item guid="2f6b6ad0-f473-49fa-8c5a-1c4e7b6846a5" action="comment" useFieldsInCommand="false">
-                                                    <command>
-                                                        <body>Graph failures</body>
-                                                    </command>
-                                                    <nestedSteps>
-                                                        <item guid="7aa07157-d03f-4e37-9f6a-a6c90e9b7e24" action="eval" useFieldsInCommand="false">
-                                                            <command>
-                                                                <body>int(gm_dict[&apos;SIP Call Failures&apos;])</body>
-                                                            </command>
-                                                            <postProcessing>
-                                                                <analysisRules>
-                                                                    <item>
-                                                                        <extractorInfo extractorType="query">
-                                                                            <extractorProperties type="com.fnfr.svt.mapping.execution.extractors.QueryDataExtractorPropertyGroup">
-                                                                                <query>responseLine()</query>
-                                                                            </extractorProperties>
-                                                                        </extractorInfo>
-                                                                        <processorInfo ruleType="chart_as_bar">
-                                                                            <ruleProperties type="com.fnfr.svt.execution.charting.processors.ChartUsingBarPropertyGroup" chartName="Call_Failures" useLegend="false" xAxisLabel="SIP Call Rate (calls/sec)" yAxisLabel="Call Failures" category="[rate]" series="[rate]" rotate="false">
-                                                                                <title>SIP Call Failures (call time [param(&apos;CallLength&apos;)] sec)</title>
-                                                                                <expression>value</expression>
-                                                                            </ruleProperties>
-                                                                        </processorInfo>
-                                                                    </item>
-                                                                </analysisRules>
-                                                            </postProcessing>
-                                                            <applicationProperties type="com.fnfr.svt.documents.EmptyPropertyGroup"/>
-                                                        </item>
-                                                    </nestedSteps>
-                                                    <applicationProperties type="com.fnfr.svt.documents.EmptyPropertyGroup"/>
-                                                </item>
-                                                <item guid="a520fd52-2d5e-4c15-8ac1-5a8baf78e495" action="comment" useFieldsInCommand="false">
-                                                    <command>
-                                                        <body>Graph Avg Call Setup</body>
-                                                    </command>
-                                                    <nestedSteps>
-                                                        <item guid="0c4e76ff-e03d-43c3-9501-daf59d87cdf3" action="eval" useFieldsInCommand="false">
-                                                            <command>
-                                                                <body>setup_avg</body>
-                                                            </command>
-                                                            <postProcessing>
-                                                                <analysisRules>
-                                                                    <item>
-                                                                        <extractorInfo extractorType="query">
-                                                                            <extractorProperties type="com.fnfr.svt.mapping.execution.extractors.QueryDataExtractorPropertyGroup">
-                                                                                <query>responseLine()</query>
-                                                                            </extractorProperties>
-                                                                        </extractorInfo>
-                                                                        <processorInfo ruleType="chart_as_bar">
-                                                                            <ruleProperties type="com.fnfr.svt.execution.charting.processors.ChartUsingBarPropertyGroup" chartName="Call_Setup_Avg" useLegend="false" xAxisLabel="SIP Call Rate (calls/sec)" yAxisLabel="Call Setup Time (ms)" category="[rate]" series="[rate]" rotate="false">
-                                                                                <title>SIP Average Call Setup (call time [param(&apos;CallLength&apos;)] sec)</title>
-                                                                                <expression>value</expression>
-                                                                            </ruleProperties>
-                                                                        </processorInfo>
-                                                                    </item>
-                                                                </analysisRules>
-                                                            </postProcessing>
-                                                            <applicationProperties type="com.fnfr.svt.documents.EmptyPropertyGroup"/>
-                                                        </item>
-                                                    </nestedSteps>
-                                                    <applicationProperties type="com.fnfr.svt.documents.EmptyPropertyGroup"/>
-                                                </item>
-                                                <item guid="14988904-352a-43a3-b159-75864d98b4f7" action="comment" useFieldsInCommand="false">
-                                                    <command>
-                                                        <body>Write to CSV</body>
-                                                    </command>
-                                                    <nestedSteps>
-                                                        <item guid="bcd18bc6-8936-4106-a35c-e39d29584e6f" action="eval" useFieldsInCommand="false">
-                                                            <command>
-                                                                <body>tlist = [str(i+1),&apos;RID-&apos;+str(running_test_id),datetime.now().strftime(&apos;%Y-%m-%d %H:%M&apos;),str(rate),str(param(&apos;CallLength&apos;)),str(param(&apos;RunTime&apos;)),str(sub_count_total),str(mm_dict[&apos;Registration Completes&apos;]),str(mm_dict[&apos;Registration Rejects&apos;]),str(sm_dict[&apos;Pdu Establishment Accepts&apos;]),str(sm_dict[&apos;Pdu Establishment Rejects&apos;]),str(gm_dict[&apos;SIP Registration Setup Count&apos;]),str(gm_dict[&apos;SIP Registration Failures&apos;]),str(gm_dict[&apos;SIP Registration Retries&apos;]),str(total_calls),str(gm_dict[&apos;SIP Call Successes&apos;]),str(gm_dict[&apos;SIP Call Failures&apos;]),str(pct_good),str(setup_avg),str(setup_min),str(setup_max)]</body>
-                                                            </command>
-                                                            <applicationProperties type="com.fnfr.svt.documents.EmptyPropertyGroup"/>
-                                                        </item>
-                                                        <item guid="7679c378-c5fc-4b98-b31d-0d4d39e1c90d" action="eval" useFieldsInCommand="false">
-                                                            <command>
-                                                                <body>tlist</body>
-                                                            </command>
-                                                            <applicationProperties type="com.fnfr.svt.documents.EmptyPropertyGroup"/>
-                                                        </item>
-                                                        <item guid="e0d1358f-a3d1-45f7-8ac6-7b8bc37068f0" action="eval" useFieldsInCommand="false">
-                                                            <command>
-                                                                <body>csv_file.write(&apos;,&apos;.join(tlist)+&apos;\\n&apos;)</body>
-                                                            </command>
-                                                            <applicationProperties type="com.fnfr.svt.documents.EmptyPropertyGroup"/>
-                                                        </item>
-                                                        <item guid="422d0288-8c61-4288-b08b-feef1dada134" action="eval" useFieldsInCommand="false">
-                                                            <command>
-                                                                <body>csv_file.flush()</body>
-                                                            </command>
-                                                            <applicationProperties type="com.fnfr.svt.documents.EmptyPropertyGroup"/>
-                                                        </item>
-                                                    </nestedSteps>
                                                     <applicationProperties type="com.fnfr.svt.documents.EmptyPropertyGroup"/>
                                                 </item>
                                             </nestedSteps>
@@ -1751,26 +1303,475 @@
                                     </nestedSteps>
                                     <applicationProperties type="com.fnfr.svt.documents.EmptyPropertyGroup"/>
                                 </item>
-                                <item guid="c238af86-1ed7-4437-a881-f7e0254a67b1" action="comment" useFieldsInCommand="false">
+                                <item guid="00a55c3e-438a-456d-8edb-3c1ac345d44c" action="eval" useFieldsInCommand="false">
                                     <command>
-                                        <body>Delete running test</body>
+                                        <body>json.dumps(mm_dict)</body>
+                                    </command>
+                                    <applicationProperties type="com.fnfr.svt.documents.EmptyPropertyGroup"/>
+                                </item>
+                                <item guid="91e6ea02-cb1e-41a8-8bf4-ad8ed3a6a53d" action="eval" useFieldsInCommand="false">
+                                    <command>
+                                        <body>json.dumps(sm_dict)</body>
+                                    </command>
+                                    <applicationProperties type="com.fnfr.svt.documents.EmptyPropertyGroup"/>
+                                </item>
+                            </nestedSteps>
+                            <applicationProperties type="com.fnfr.svt.documents.EmptyPropertyGroup"/>
+                        </item>
+                        <item guid="78003c7a-a698-4129-a923-35da68af0eda" action="comment" useFieldsInCommand="false">
+                            <command>
+                                <body>Get SIP reg counts from CSV </body>
+                            </command>
+                            <nestedSteps>
+                                <item guid="ac269a63-5cdd-4291-8f13-b9641c0bd3d0" action="call" useFieldsInCommand="false">
+                                    <command>
+                                        <body>project://ai_Dish_Production/DISH_5G/test_cases_scale/procedures/scale_procedures.fftc#getLastValuesCsvDict(input_results_dict=results_dict, group=&apos;Gm|Main&apos;, item_list=[&apos;SIP Registration Setup Count&apos;,&apos;SIP Registration Failures&apos;,&apos;SIP Registration Retries&apos;,&apos;SIP Call Successes&apos;,&apos;SIP Call Failures&apos;,&apos;SIP Average Call Setup (micro-sec)&apos;,&apos;SIP Minimum Call Setup (micro-sec)&apos;,&apos;SIP Maximum Call Setup (micro-sec)&apos;])</body>
+                                    </command>
+                                    <postProcessing>
+                                        <storeResponseAt>gm_dict</storeResponseAt>
+                                        <storeResponseText>true</storeResponseText>
+                                    </postProcessing>
+                                    <applicationProperties type="com.fnfr.svt.documents.EmptyPropertyGroup"/>
+                                </item>
+                                <item guid="71080be7-52bf-40f4-a01f-6520fe3af6ad" action="comment" useFieldsInCommand="false">
+                                    <command>
+                                        <body>convert floats to int</body>
                                     </command>
                                     <nestedSteps>
-                                        <item guid="93fba858-0bb5-43b8-ae3a-8bc1658df5d1" action="Custom" session="s1">
+                                        <item guid="443def05-e616-45a2-8edf-50079e21da44" action="for" useFieldsInCommand="false">
                                             <command>
-                                                <body>-requestMethod DELETE -dataType json -rawResponse true -url [tas_api_url]/runningTests/[running_test_id]</body>
+                                                <body>item in [&apos;SIP Registration Setup Count&apos;,&apos;SIP Registration Failures&apos;,&apos;SIP Registration Retries&apos;,&apos;SIP Call Successes&apos;,&apos;SIP Call Failures&apos;,&apos;SIP Average Call Setup (micro-sec)&apos;,&apos;SIP Minimum Call Setup (micro-sec)&apos;,&apos;SIP Maximum Call Setup (micro-sec)&apos;]:</body>
                                             </command>
-                                            <postProcessing>
-                                                <storeResponseAt>favorites_measurements</storeResponseAt>
-                                                <storeResponseText>true</storeResponseText>
-                                            </postProcessing>
-                                            <applicationProperties type="com.fnfr.itest.platform2.shared.documents.ntaf.NtafTransferableDocumentObject" action="Custom" subharness="http://spirent.com/NTAF/harness/iTest/LandslideRest/Main" harness="http://spirent.com/NTAF/harness/iTest/LandslideRest/Main" harnessName="http://spirent.com/NTAF/harness/iTest/LandslideRest/Main" requestMethod="DELETE" requestMethod.inherit="false" rawResponse="true" rawResponse.inherit="false" url="[tas_api_url]/runningTests/[running_test_id]" url.inherit="false"/>
+                                            <nestedSteps>
+                                                <item guid="a6525af4-676b-43a6-beb8-cd96b4651482" action="eval" useFieldsInCommand="false">
+                                                    <command>
+                                                        <body>gm_dict[item] = int(float(gm_dict[item]))</body>
+                                                    </command>
+                                                    <applicationProperties type="com.fnfr.svt.documents.EmptyPropertyGroup"/>
+                                                </item>
+                                            </nestedSteps>
+                                            <applicationProperties type="com.fnfr.svt.documents.EmptyPropertyGroup"/>
+                                        </item>
+                                    </nestedSteps>
+                                    <applicationProperties type="com.fnfr.svt.documents.EmptyPropertyGroup"/>
+                                </item>
+                                <item guid="1c14e9bf-e140-4c8b-873a-7cfed24a9217" action="eval" useFieldsInCommand="false">
+                                    <command>
+                                        <body>json.dumps(gm_dict)</body>
+                                    </command>
+                                    <applicationProperties type="com.fnfr.svt.documents.EmptyPropertyGroup"/>
+                                </item>
+                            </nestedSteps>
+                            <applicationProperties type="com.fnfr.svt.documents.EmptyPropertyGroup"/>
+                        </item>
+                        <item guid="5e1df35e-3ef9-44a7-a1b6-3af64b9af7d4" action="comment" useFieldsInCommand="false">
+                            <command>
+                                <body>For SIP reg count grab the count from the middle of the test because something FUNKY is happening with this count at the end of test</body>
+                            </command>
+                            <nestedSteps>
+                                <item guid="c0c55f0d-932b-4c71-b1f1-461f6e0d4894" action="comment" useFieldsInCommand="false">
+                                    <command>
+                                        <body>get middle number</body>
+                                    </command>
+                                    <nestedSteps>
+                                        <item guid="45755aeb-4dfd-4771-a7be-e79cd3c67c77" action="eval" useFieldsInCommand="false">
+                                            <command>
+                                                <body>[*results_dict[&apos;Gm|Main&apos;]]</body>
+                                            </command>
+                                            <applicationProperties type="com.fnfr.svt.documents.EmptyPropertyGroup"/>
+                                        </item>
+                                        <item guid="f9217a3e-0b77-467a-84db-a512eefc46bc" action="eval" useFieldsInCommand="false">
+                                            <command>
+                                                <body>middle_num = int(int([*results_dict[&apos;Gm|Main&apos;]][-2])/2)</body>
+                                            </command>
+                                            <applicationProperties type="com.fnfr.svt.documents.EmptyPropertyGroup"/>
+                                        </item>
+                                        <item guid="2cfde9ca-3088-4b73-a3a3-2610266717b4" action="eval" useFieldsInCommand="false">
+                                            <command>
+                                                <body>middle_num</body>
+                                            </command>
+                                            <applicationProperties type="com.fnfr.svt.documents.EmptyPropertyGroup"/>
+                                        </item>
+                                    </nestedSteps>
+                                    <applicationProperties type="com.fnfr.svt.documents.EmptyPropertyGroup"/>
+                                </item>
+                                <item guid="6a1eba06-07c4-4934-af3e-3c061cfe07bc" action="comment" useFieldsInCommand="false">
+                                    <command>
+                                        <body>overwrite gm SIP Reg count from end w/ count from middle</body>
+                                    </command>
+                                    <nestedSteps>
+                                        <item guid="31fcb471-fdf4-470e-b910-d5b351d0fea4" action="eval" useFieldsInCommand="false">
+                                            <command>
+                                                <body>indx = int([i for i, s in enumerate(results_dict[&apos;Gm|Main&apos;][&apos;headers&apos;]) if &apos;SIP Registration Setup Count&apos; in s][0])</body>
+                                            </command>
+                                            <applicationProperties type="com.fnfr.svt.documents.EmptyPropertyGroup"/>
+                                        </item>
+                                        <item guid="6e7958b7-06b4-4bf2-baeb-e750037ac62d" action="eval" useFieldsInCommand="false">
+                                            <command>
+                                                <body>gm_dict[&apos;SIP Registration Setup Count&apos;] = int(float(results_dict[&apos;Gm|Main&apos;][str(middle_num)][indx]))</body>
+                                            </command>
+                                            <applicationProperties type="com.fnfr.svt.documents.EmptyPropertyGroup"/>
                                         </item>
                                     </nestedSteps>
                                     <applicationProperties type="com.fnfr.svt.documents.EmptyPropertyGroup"/>
                                 </item>
                             </nestedSteps>
                             <applicationProperties type="com.fnfr.svt.documents.EmptyPropertyGroup"/>
+                        </item>
+                        <item guid="0589a4fe-91f7-4192-b22f-115b59fefa1b" action="comment" useFieldsInCommand="false">
+                            <command>
+                                <body>Report results</body>
+                            </command>
+                            <nestedSteps>
+                                <item guid="40fa8821-1d18-4d51-9978-c632caf048fe" action="comment" useFieldsInCommand="false">
+                                    <command>
+                                        <body>Output text</body>
+                                    </command>
+                                    <nestedSteps>
+                                        <item guid="d7a29a8b-0370-4472-aaa8-bd48cbadc762" action="eval" useFieldsInCommand="false">
+                                            <command>
+                                                <body>total_calls= gm_dict[&apos;SIP Call Successes&apos;]+gm_dict[&apos;SIP Call Failures&apos;]</body>
+                                            </command>
+                                            <applicationProperties type="com.fnfr.svt.documents.EmptyPropertyGroup"/>
+                                        </item>
+                                        <item guid="ff52f2de-708b-4ac9-af34-c255d471e7fe" action="if" useFieldsInCommand="false">
+                                            <command>
+                                                <body>total_calls == 0:</body>
+                                            </command>
+                                            <nestedSteps>
+                                                <item guid="d7eb7e7c-ffa8-46b2-917f-2638855dee9b" action="eval" useFieldsInCommand="false">
+                                                    <command>
+                                                        <body>pct_good = 0</body>
+                                                    </command>
+                                                    <applicationProperties type="com.fnfr.svt.documents.EmptyPropertyGroup"/>
+                                                </item>
+                                                <item guid="239c081d-08f9-499f-83ac-26f8a51fd56b" action="message" useFieldsInCommand="false">
+                                                    <command>
+                                                        <body>Error:-Registration Failure</body>
+                                                    </command>
+                                                    <applicationProperties type="com.fnfr.svt.execution.builtin.exec.MessagePropertyGroup">
+                                                        <severity inherit="false">Error</severity>
+                                                        <message inherit="false">-Registration Failure</message>
+                                                    </applicationProperties>
+                                                </item>
+                                            </nestedSteps>
+                                            <applicationProperties type="com.fnfr.svt.documents.EmptyPropertyGroup"/>
+                                        </item>
+                                        <item guid="dad66cc2-7a4d-40f6-b102-aac3166c114c" action="else" useFieldsInCommand="false">
+                                            <nestedSteps>
+                                                <item guid="59959935-1fd4-422c-b318-408ec4b95ec6" action="eval" useFieldsInCommand="false">
+                                                    <command>
+                                                        <body>pct_good=100*(gm_dict[&apos;SIP Call Successes&apos;]/total_calls)</body>
+                                                    </command>
+                                                    <applicationProperties type="com.fnfr.svt.documents.EmptyPropertyGroup"/>
+                                                </item>
+                                            </nestedSteps>
+                                            <applicationProperties type="com.fnfr.svt.documents.EmptyPropertyGroup"/>
+                                        </item>
+                                        <item guid="551d71d9-8181-4114-ba03-7299882aa7e2" action="eval" useFieldsInCommand="false">
+                                            <command>
+                                                <body>total_reg = gm_dict[&apos;SIP Registration Setup Count&apos;]+gm_dict[&apos;SIP Registration Failures&apos;]</body>
+                                            </command>
+                                            <applicationProperties type="com.fnfr.svt.documents.EmptyPropertyGroup"/>
+                                        </item>
+                                        <item guid="4aecae0b-6c7d-4afc-be46-01acbd1c8ae4" action="eval" useFieldsInCommand="false">
+                                            <command>
+                                                <body>setup_avg = int(gm_dict[&quot;SIP Average Call Setup (micro-sec)&quot;]/1000)</body>
+                                            </command>
+                                            <applicationProperties type="com.fnfr.svt.documents.EmptyPropertyGroup"/>
+                                        </item>
+                                        <item guid="9626aab7-4542-4d37-9f6b-165c5f18ce1b" action="eval" useFieldsInCommand="false">
+                                            <command>
+                                                <body>setup_min = int(gm_dict[&quot;SIP Minimum Call Setup (micro-sec)&quot;]/1000)</body>
+                                            </command>
+                                            <applicationProperties type="com.fnfr.svt.documents.EmptyPropertyGroup"/>
+                                        </item>
+                                        <item guid="548b62d8-a370-4a76-ab8c-9cc00718bbd5" action="eval" useFieldsInCommand="false">
+                                            <command>
+                                                <body>setup_max = int(gm_dict[&quot;SIP Maximum Call Setup (micro-sec)&quot;]/1000)</body>
+                                            </command>
+                                            <applicationProperties type="com.fnfr.svt.documents.EmptyPropertyGroup"/>
+                                        </item>
+                                        <item guid="7e1a5201-eedb-4344-afa4-20bedb8e1849" action="message" useFieldsInCommand="false">
+                                            <command>
+                                                <body>Information:--Subscribers = [sub_count_total]</body>
+                                            </command>
+                                            <applicationProperties type="com.fnfr.svt.execution.builtin.exec.MessagePropertyGroup">
+                                                <severity inherit="false" defaultValue=""/>
+                                                <message inherit="false">--Subscribers = [sub_count_total]</message>
+                                            </applicationProperties>
+                                        </item>
+                                        <item guid="422b72dc-536b-4cda-b5bf-f5ee044deb71" action="message" useFieldsInCommand="false">
+                                            <command>
+                                                <body>Information:--5G Registrations Success = [mm_dict[&apos;Registration Completes&apos;]]</body>
+                                            </command>
+                                            <applicationProperties type="com.fnfr.svt.execution.builtin.exec.MessagePropertyGroup">
+                                                <severity inherit="false" defaultValue=""/>
+                                                <message inherit="false">--5G Registrations Success = [mm_dict[&apos;Registration Completes&apos;]]</message>
+                                            </applicationProperties>
+                                        </item>
+                                        <item guid="0c3f3f69-4a36-4713-a44c-13cdd443282b" action="message" useFieldsInCommand="false">
+                                            <command>
+                                                <body>Information:--PDU Registrations Success = [sm_dict[&apos;Pdu Establishment Accepts&apos;]]</body>
+                                            </command>
+                                            <applicationProperties type="com.fnfr.svt.execution.builtin.exec.MessagePropertyGroup">
+                                                <severity inherit="false" defaultValue=""/>
+                                                <message inherit="false">--PDU Registrations Success = [sm_dict[&apos;Pdu Establishment Accepts&apos;]]</message>
+                                            </applicationProperties>
+                                        </item>
+                                        <item guid="46466ef2-434c-4120-a139-a58edfee0644" action="message" useFieldsInCommand="false">
+                                            <command>
+                                                <body>Information:--SIP Registrations Success = [gm_dict[&apos;SIP Registration Setup Count&apos;]]</body>
+                                            </command>
+                                            <applicationProperties type="com.fnfr.svt.execution.builtin.exec.MessagePropertyGroup">
+                                                <severity inherit="false" defaultValue=""/>
+                                                <message inherit="false">--SIP Registrations Success = [gm_dict[&apos;SIP Registration Setup Count&apos;]]</message>
+                                            </applicationProperties>
+                                        </item>
+                                        <item guid="8aeb8b54-bd02-4371-97fc-2e961de202fa" action="message" useFieldsInCommand="false">
+                                            <command>
+                                                <body>Information:--SIP Registration failures = [gm_dict[&apos;SIP Registration Failures&apos;]]</body>
+                                            </command>
+                                            <applicationProperties type="com.fnfr.svt.execution.builtin.exec.MessagePropertyGroup">
+                                                <severity inherit="false" defaultValue=""/>
+                                                <message inherit="false">--SIP Registration failures = [gm_dict[&apos;SIP Registration Failures&apos;]]</message>
+                                            </applicationProperties>
+                                        </item>
+                                        <item guid="efb53518-b65f-48fe-ac33-0817df3b5d9d" action="message" useFieldsInCommand="false">
+                                            <command>
+                                                <body>Information:--SIP Calls Attempted = [total_calls]</body>
+                                            </command>
+                                            <applicationProperties type="com.fnfr.svt.execution.builtin.exec.MessagePropertyGroup">
+                                                <message inherit="false">--SIP Calls Attempted = [total_calls]</message>
+                                            </applicationProperties>
+                                        </item>
+                                        <item guid="3d8fbfdf-0cb7-4ea6-a949-84221cfbe2a1" action="message" useFieldsInCommand="false">
+                                            <command>
+                                                <body>Information:--SIP Call Success = [gm_dict[&apos;SIP Call Successes&apos;]]</body>
+                                            </command>
+                                            <applicationProperties type="com.fnfr.svt.execution.builtin.exec.MessagePropertyGroup">
+                                                <message inherit="false">--SIP Call Success = [gm_dict[&apos;SIP Call Successes&apos;]]</message>
+                                            </applicationProperties>
+                                        </item>
+                                        <item guid="fe31f153-92b4-441a-9841-dd4a1cda2cb1" action="message" useFieldsInCommand="false">
+                                            <command>
+                                                <body>Information:--SIP Call Failure = [gm_dict[&apos;SIP Call Failures&apos;]]</body>
+                                            </command>
+                                            <applicationProperties type="com.fnfr.svt.execution.builtin.exec.MessagePropertyGroup">
+                                                <message inherit="false">--SIP Call Failure = [gm_dict[&apos;SIP Call Failures&apos;]]</message>
+                                            </applicationProperties>
+                                        </item>
+                                        <item guid="6109dbe6-d44a-49e9-83f3-6a833765e657" action="message" useFieldsInCommand="false">
+                                            <command>
+                                                <body>Information:--Call Sucess = [pct_good]%</body>
+                                            </command>
+                                            <applicationProperties type="com.fnfr.svt.execution.builtin.exec.MessagePropertyGroup">
+                                                <message inherit="false">--Call Sucess = [pct_good]%</message>
+                                            </applicationProperties>
+                                        </item>
+                                        <item guid="1c5d5564-2c2c-4d54-90d8-7ea40e74f9d2" action="message" useFieldsInCommand="false">
+                                            <command>
+                                                <body>Information:--SIP Average Call Setup = [setup_avg] ms</body>
+                                            </command>
+                                            <applicationProperties type="com.fnfr.svt.execution.builtin.exec.MessagePropertyGroup">
+                                                <message inherit="false">--SIP Average Call Setup = [setup_avg] ms</message>
+                                            </applicationProperties>
+                                        </item>
+                                        <item guid="7dcb7154-533c-4194-acf6-6870f83a0ae6" action="message" useFieldsInCommand="false">
+                                            <command>
+                                                <body>Information:--SIP Minimum Call Setup = [setup_min] ms</body>
+                                            </command>
+                                            <applicationProperties type="com.fnfr.svt.execution.builtin.exec.MessagePropertyGroup">
+                                                <message inherit="false">--SIP Minimum Call Setup = [setup_min] ms</message>
+                                            </applicationProperties>
+                                        </item>
+                                        <item guid="325c8a19-2475-4ba3-963a-23a70a0afcdf" action="message" useFieldsInCommand="false">
+                                            <command>
+                                                <body>Information:--SIP Maximum Call Setup = [setup_max] ms</body>
+                                            </command>
+                                            <applicationProperties type="com.fnfr.svt.execution.builtin.exec.MessagePropertyGroup">
+                                                <message inherit="false">--SIP Maximum Call Setup = [setup_max] ms</message>
+                                            </applicationProperties>
+                                        </item>
+                                    </nestedSteps>
+                                    <applicationProperties type="com.fnfr.svt.documents.EmptyPropertyGroup"/>
+                                </item>
+                                <item guid="5ef66377-08c4-44a8-b8f7-933066817c51" action="comment" useFieldsInCommand="false">
+                                    <command>
+                                        <body>Graph percentage</body>
+                                    </command>
+                                    <nestedSteps>
+                                        <item guid="b5a4c6cd-ada7-4601-a3d2-5284a4f5bfc1" action="eval" useFieldsInCommand="false">
+                                            <command>
+                                                <body>float(&apos;%0.2f&apos; % pct_good)</body>
+                                            </command>
+                                            <postProcessing>
+                                                <analysisRules>
+                                                    <item>
+                                                        <extractorInfo extractorType="query">
+                                                            <extractorProperties type="com.fnfr.svt.mapping.execution.extractors.QueryDataExtractorPropertyGroup">
+                                                                <query>responseLine()</query>
+                                                            </extractorProperties>
+                                                        </extractorInfo>
+                                                        <processorInfo ruleType="chart_as_bar">
+                                                            <ruleProperties type="com.fnfr.svt.execution.charting.processors.ChartUsingBarPropertyGroup" chartName="Pct_Success" useLegend="false" xAxisLabel="SIP Call Rate (calls/sec)" yAxisLabel="Success Percentage" category="[rate]" series="[rate]" rotate="false">
+                                                                <title>Call Success (call time [param(&apos;CallLength&apos;)] sec)</title>
+                                                                <expression>value</expression>
+                                                            </ruleProperties>
+                                                        </processorInfo>
+                                                    </item>
+                                                </analysisRules>
+                                            </postProcessing>
+                                            <applicationProperties type="com.fnfr.svt.documents.EmptyPropertyGroup"/>
+                                        </item>
+                                    </nestedSteps>
+                                    <applicationProperties type="com.fnfr.svt.documents.EmptyPropertyGroup"/>
+                                </item>
+                                <item guid="06393423-b26b-4f1e-979e-2db0cdecd33d" action="comment" useFieldsInCommand="false">
+                                    <command>
+                                        <body>Graph volume</body>
+                                    </command>
+                                    <nestedSteps>
+                                        <item guid="8c8cf5b2-665a-4d12-98ad-1dfc8c940e1b" action="eval" useFieldsInCommand="false">
+                                            <command>
+                                                <body>total_calls</body>
+                                            </command>
+                                            <postProcessing>
+                                                <analysisRules>
+                                                    <item>
+                                                        <extractorInfo extractorType="query">
+                                                            <extractorProperties type="com.fnfr.svt.mapping.execution.extractors.QueryDataExtractorPropertyGroup">
+                                                                <query>responseLine()</query>
+                                                            </extractorProperties>
+                                                        </extractorInfo>
+                                                        <processorInfo ruleType="chart_as_bar">
+                                                            <ruleProperties type="com.fnfr.svt.execution.charting.processors.ChartUsingBarPropertyGroup" chartName="Call_Vol" useLegend="false" xAxisLabel="SIP Call Rate (calls/sec)" yAxisLabel="Total Calls" category="[rate]" series="[rate]" rotate="false">
+                                                                <title>Call Volume (call time [param(&apos;CallLength&apos;)] sec)</title>
+                                                                <expression>value</expression>
+                                                            </ruleProperties>
+                                                        </processorInfo>
+                                                    </item>
+                                                </analysisRules>
+                                            </postProcessing>
+                                            <applicationProperties type="com.fnfr.svt.documents.EmptyPropertyGroup"/>
+                                        </item>
+                                    </nestedSteps>
+                                    <applicationProperties type="com.fnfr.svt.documents.EmptyPropertyGroup"/>
+                                </item>
+                                <item guid="49abbd96-ec45-4275-8d54-b6998a802a70" action="comment" useFieldsInCommand="false">
+                                    <command>
+                                        <body>Graph failures</body>
+                                    </command>
+                                    <nestedSteps>
+                                        <item guid="ade70516-0ca7-40c6-91e9-21cd0dad8a30" action="eval" useFieldsInCommand="false">
+                                            <command>
+                                                <body>int(gm_dict[&apos;SIP Call Failures&apos;])</body>
+                                            </command>
+                                            <postProcessing>
+                                                <analysisRules>
+                                                    <item>
+                                                        <extractorInfo extractorType="query">
+                                                            <extractorProperties type="com.fnfr.svt.mapping.execution.extractors.QueryDataExtractorPropertyGroup">
+                                                                <query>responseLine()</query>
+                                                            </extractorProperties>
+                                                        </extractorInfo>
+                                                        <processorInfo ruleType="chart_as_bar">
+                                                            <ruleProperties type="com.fnfr.svt.execution.charting.processors.ChartUsingBarPropertyGroup" chartName="Call_Failures" useLegend="false" xAxisLabel="SIP Call Rate (calls/sec)" yAxisLabel="Call Failures" category="[rate]" series="[rate]" rotate="false">
+                                                                <title>SIP Call Failures (call time [param(&apos;CallLength&apos;)] sec)</title>
+                                                                <expression>value</expression>
+                                                            </ruleProperties>
+                                                        </processorInfo>
+                                                    </item>
+                                                </analysisRules>
+                                            </postProcessing>
+                                            <applicationProperties type="com.fnfr.svt.documents.EmptyPropertyGroup"/>
+                                        </item>
+                                    </nestedSteps>
+                                    <applicationProperties type="com.fnfr.svt.documents.EmptyPropertyGroup"/>
+                                </item>
+                                <item guid="8bfe00c2-c692-4a43-a80f-14cb73a9f87b" action="comment" useFieldsInCommand="false">
+                                    <command>
+                                        <body>Graph Avg Call Setup</body>
+                                    </command>
+                                    <nestedSteps>
+                                        <item guid="c821df95-a97a-4fe0-a5d9-affb3af7688b" action="eval" useFieldsInCommand="false">
+                                            <command>
+                                                <body>setup_avg</body>
+                                            </command>
+                                            <postProcessing>
+                                                <analysisRules>
+                                                    <item>
+                                                        <extractorInfo extractorType="query">
+                                                            <extractorProperties type="com.fnfr.svt.mapping.execution.extractors.QueryDataExtractorPropertyGroup">
+                                                                <query>responseLine()</query>
+                                                            </extractorProperties>
+                                                        </extractorInfo>
+                                                        <processorInfo ruleType="chart_as_bar">
+                                                            <ruleProperties type="com.fnfr.svt.execution.charting.processors.ChartUsingBarPropertyGroup" chartName="Call_Setup_Avg" useLegend="false" xAxisLabel="SIP Call Rate (calls/sec)" yAxisLabel="Call Setup Time (ms)" category="[rate]" series="[rate]" rotate="false">
+                                                                <title>SIP Average Call Setup (call time [param(&apos;CallLength&apos;)] sec)</title>
+                                                                <expression>value</expression>
+                                                            </ruleProperties>
+                                                        </processorInfo>
+                                                    </item>
+                                                </analysisRules>
+                                            </postProcessing>
+                                            <applicationProperties type="com.fnfr.svt.documents.EmptyPropertyGroup"/>
+                                        </item>
+                                    </nestedSteps>
+                                    <applicationProperties type="com.fnfr.svt.documents.EmptyPropertyGroup"/>
+                                </item>
+                                <item guid="2de3b3b0-2122-429f-8135-f0cce085d6b5" action="comment" useFieldsInCommand="false">
+                                    <command>
+                                        <body>Write to CSV</body>
+                                    </command>
+                                    <nestedSteps>
+                                        <item guid="4c070e03-2806-4927-ac4a-8fb38902d2dd" action="eval" useFieldsInCommand="false">
+                                            <command>
+                                                <body>tlist = [str(i+1),&apos;RID-&apos;+str(running_test_id),datetime.now().strftime(&apos;%Y-%m-%d %H:%M&apos;),str(rate),str(param(&apos;CallLength&apos;)),str(param(&apos;RunTime&apos;)),str(sub_count_total),str(mm_dict[&apos;Registration Completes&apos;]),str(mm_dict[&apos;Registration Rejects&apos;]),str(sm_dict[&apos;Pdu Establishment Accepts&apos;]),str(sm_dict[&apos;Pdu Establishment Rejects&apos;]),str(gm_dict[&apos;SIP Registration Setup Count&apos;]),str(gm_dict[&apos;SIP Registration Failures&apos;]),str(gm_dict[&apos;SIP Registration Retries&apos;]),str(total_calls),str(gm_dict[&apos;SIP Call Successes&apos;]),str(gm_dict[&apos;SIP Call Failures&apos;]),str(pct_good),str(setup_avg),str(setup_min),str(setup_max)]</body>
+                                            </command>
+                                            <applicationProperties type="com.fnfr.svt.documents.EmptyPropertyGroup"/>
+                                        </item>
+                                        <item guid="62d5cbc8-4b84-4a6d-9016-ab89ea05fcf1" action="eval" useFieldsInCommand="false">
+                                            <command>
+                                                <body>tlist</body>
+                                            </command>
+                                            <applicationProperties type="com.fnfr.svt.documents.EmptyPropertyGroup"/>
+                                        </item>
+                                        <item guid="655ef1b8-75fe-4c28-ac3f-a72fbfb43b25" action="eval" useFieldsInCommand="false">
+                                            <command>
+                                                <body>csv_file.write(&apos;,&apos;.join(tlist)+&apos;\\n&apos;)</body>
+                                            </command>
+                                            <applicationProperties type="com.fnfr.svt.documents.EmptyPropertyGroup"/>
+                                        </item>
+                                        <item guid="d7255e82-b6ef-4393-920b-90c1ba63174c" action="eval" useFieldsInCommand="false">
+                                            <command>
+                                                <body>csv_file.flush()</body>
+                                            </command>
+                                            <applicationProperties type="com.fnfr.svt.documents.EmptyPropertyGroup"/>
+                                        </item>
+                                    </nestedSteps>
+                                    <applicationProperties type="com.fnfr.svt.documents.EmptyPropertyGroup"/>
+                                </item>
+                            </nestedSteps>
+                            <applicationProperties type="com.fnfr.svt.documents.EmptyPropertyGroup"/>
+                        </item>
+                    </nestedSteps>
+                    <applicationProperties type="com.fnfr.svt.documents.EmptyPropertyGroup"/>
+                </item>
+                <item guid="4b63cc98-6048-4d08-971c-3f7c7ad104bc" action="comment" useFieldsInCommand="false">
+                    <command>
+                        <body>Delete running test</body>
+                    </command>
+                    <nestedSteps>
+                        <item guid="41f0437a-2bc2-4ffe-af2d-142da09ad86e" action="Custom" session="s1">
+                            <command>
+                                <body>-requestMethod DELETE -dataType json -rawResponse true -url [tas_api_url]/runningTests/[running_test_id]</body>
+                            </command>
+                            <postProcessing>
+                                <storeResponseAt>favorites_measurements</storeResponseAt>
+                                <storeResponseText>true</storeResponseText>
+                            </postProcessing>
+                            <applicationProperties type="com.fnfr.itest.platform2.shared.documents.ntaf.NtafTransferableDocumentObject" action="Custom" subharness="http://spirent.com/NTAF/harness/iTest/LandslideRest/Main" harness="http://spirent.com/NTAF/harness/iTest/LandslideRest/Main" harnessName="http://spirent.com/NTAF/harness/iTest/LandslideRest/Main" requestMethod="DELETE" requestMethod.inherit="false" rawResponse="true" rawResponse.inherit="false" url="[tas_api_url]/runningTests/[running_test_id]" url.inherit="false"/>
                         </item>
                     </nestedSteps>
                     <applicationProperties type="com.fnfr.svt.documents.EmptyPropertyGroup"/>
